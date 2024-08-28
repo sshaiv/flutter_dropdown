@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'Examination.dart';
+import 'Examination/Examination.dart';
 
 class AddPatientPage extends StatefulWidget {
   const AddPatientPage({super.key});
