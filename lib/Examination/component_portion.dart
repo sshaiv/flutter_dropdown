@@ -68,13 +68,9 @@ class ComponentPortion extends StatelessWidget {
                           fit: BoxFit.cover,
                         ),
                         const SizedBox(height: 8.0),
-                        const Text(
+                         Text(
                           'Chief Complaints',
-                          style: TextStyle(
-                            fontSize: 9.0,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
+                            style:GoogleFonts.handjet(color:Colors.black,fontSize:12)
                         ),
                       ],
                     ),
@@ -100,13 +96,9 @@ class ComponentPortion extends StatelessWidget {
                           fit: BoxFit.cover,
                         ),
                         const SizedBox(height: 8.0),
-                        const Text(
+                        Text(
                           'Allergy History',
-                          style: TextStyle(
-                            fontSize: 9.0,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
+                            style:GoogleFonts.handjet(color:Colors.black,fontSize:12)
                         ),
                       ],
                     ),
@@ -132,13 +124,9 @@ class ComponentPortion extends StatelessWidget {
                           fit: BoxFit.cover,
                         ),
                         const SizedBox(height: 8.0),
-                        const Text(
+                         Text(
                           'Diagnosis',
-                          style: TextStyle(
-                            fontSize: 9.0,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
+                             style:GoogleFonts.handjet(color:Colors.black,fontSize:12)
                         ),
                       ],
                     ),
@@ -166,13 +154,9 @@ class ComponentPortion extends StatelessWidget {
                           fit: BoxFit.cover,
                         ),
                         const SizedBox(height: 8.0),
-                        const Text(
+                         Text(
                           'Examination Findings',
-                          style: TextStyle(
-                            fontSize: 8.0,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
+                             style:GoogleFonts.handjet(color:Colors.black,fontSize:12)
                         ),
                       ],
                     ),
@@ -196,13 +180,9 @@ class ComponentPortion extends StatelessWidget {
                           fit: BoxFit.cover,
                         ),
                         const SizedBox(height: 8.0),
-                        const Text(
+                        Text(
                           'Family History',
-                          style: TextStyle(
-                            fontSize: 9.0,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
+                            style:GoogleFonts.handjet(color:Colors.black,fontSize:12)
                         ),
                       ],
                     ),
@@ -226,13 +206,9 @@ class ComponentPortion extends StatelessWidget {
                           fit: BoxFit.cover,
                         ),
                         const SizedBox(height: 8.0),
-                        const Text(
+                         Text(
                           'PastMedicalHistory',
-                          style: TextStyle(
-                            fontSize: 9.0,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
+                             style:GoogleFonts.handjet(color:Colors.black,fontSize:12)
                         ),
                       ],
                     ),
@@ -261,13 +237,9 @@ class ComponentPortion extends StatelessWidget {
                           fit: BoxFit.cover,
                         ),
                         const SizedBox(height: 8.0),
-                        const Text(
+                         Text(
                           'Surgical History',
-                          style: TextStyle(
-                            fontSize: 9.0,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
+                             style:GoogleFonts.handjet(color:Colors.black,fontSize:12)
                         ),
                       ],
                     ),

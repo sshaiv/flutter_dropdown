@@ -1,6 +1,11 @@
+import 'dart:ui';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:medicine_doc/Examination/Investigation.dart';
 import 'package:medicine_doc/Examination/component_portion.dart';
 import 'package:medicine_doc/Examination/medicine_dropdown.dart';
 
@@ -248,7 +253,8 @@ class _ExaminationPageState extends State<ExaminationPage> {
                                   controller: _controller,
                                   decoration: const InputDecoration(
                                     border: OutlineInputBorder(),
-                                    labelText: 'Doctor Note',
+                                    labelText: 'Start typing here....',
+                                    labelStyle: TextStyle(fontSize: 10),
                                   ),
                                   minLines: 1,
                                   maxLines: null,
@@ -258,7 +264,7 @@ class _ExaminationPageState extends State<ExaminationPage> {
                               // Save button
                               ElevatedButton(
                                 onPressed: _checkupData,
-                                child: const Text('Save'),
+                                child: const Text('Next'),
                               ),
                             ],
                           ),
@@ -266,9 +272,8 @@ class _ExaminationPageState extends State<ExaminationPage> {
                       ),
                     ),
                   ),
-
-
                    SizedBox(height: 20),
+
 
                  // Medicine Dropdown Section
                    Row(
@@ -310,82 +315,8 @@ class _ExaminationPageState extends State<ExaminationPage> {
                       ),
                     ],
                   ),
-
-                  Container(
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton2<String>(
-                        isExpanded: true,
-                        hint: const Text(
-                          'Select Investigation',
-                          style: TextStyle(fontSize: 14),
-                        ),
-                        items: items
-                            .map((item) => DropdownMenuItem<String>(
-                          value: item,
-                          child: Text(
-                            item,
-                            style: const TextStyle(fontSize: 14),
-                          ),
-                        ))
-                            .toList(),
-                        value: selectedValue,
-                        onChanged: (value) {
-                          setState(() {
-                            selectedValue = value;
-                          });
-                        },
-                        buttonStyleData: const ButtonStyleData(
-                          padding: EdgeInsets.symmetric(horizontal: 16),
-                          height: 40,
-                          width: 200,
-                        ),
-                        dropdownStyleData: const DropdownStyleData(
-                          maxHeight: 200,
-                        ),
-                        menuItemStyleData: const MenuItemStyleData(
-                          height: 40,
-                        ),
-                        dropdownSearchData: DropdownSearchData(
-                          searchController: textEditingController,
-                          searchInnerWidgetHeight: 50,
-                          searchInnerWidget: Container(
-                            height: 50,
-                            padding: const EdgeInsets.only(
-                              top: 8,
-                              bottom: 4,
-                              right: 8,
-                              left: 8,
-                            ),
-                            child: TextFormField(
-                              expands: true,
-                              maxLines: null,
-                              controller: textEditingController,
-                              decoration: InputDecoration(
-                                isDense: true,
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 8,
-                                ),
-                                hintText: 'Search for an item...',
-                                hintStyle: const TextStyle(fontSize: 12),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                              ),
-                            ),
-                          ),
-                          searchMatchFn: (item, searchValue) {
-                            return item.value.toString().contains(searchValue);
-                          },
-                        ),
-                        onMenuStateChange: (isOpen) {
-                          if (!isOpen) {
-                            textEditingController.clear();
-                          }
-                        },
-                      ),
-                    ),
-                  ),
+                  
+                  const InvestigationDropdown(),
                   const SizedBox(height: 20),
 
                   //follow up
@@ -408,16 +339,13 @@ class _ExaminationPageState extends State<ExaminationPage> {
                           const SizedBox(height: 10),
                           Row(
                             children: [
-                              const Text(
+                              Text(
                                 ' Date : ',
-                                style: TextStyle(
-                                  fontSize: 15.0,
-                                  color: Colors.black,
-                                ),
+                                  style: GoogleFonts.dmSerifText(color:Colors.black,fontSize:16)
                               ),
                               SizedBox(width:20),
                               SizedBox(
-                                width: 200.0,  // Set the desired width
+                                width: 215.0,  // Set the desired width
                                 child: ElevatedButton(
                                   onPressed: () => _selectDate(context),
                                   child: Text(
@@ -432,12 +360,9 @@ class _ExaminationPageState extends State<ExaminationPage> {
                           const SizedBox(height: 4.0),
                           Row(
                             children: [
-                              const Text(
-                                'Remark ',
-                                style: TextStyle(
-                                  fontSize: 15.0,
-                                  color: Colors.black,
-                                ),
+                               Text(
+                                'Remark : ',
+                                   style: GoogleFonts.dmSerifText(color:Colors.black,fontSize:16)
                               ),
                               const SizedBox(width: 10),
                               Expanded(
@@ -447,7 +372,8 @@ class _ExaminationPageState extends State<ExaminationPage> {
                                     controller: _remarkController,
                                     decoration: const InputDecoration(
                                       border: OutlineInputBorder(),
-                                      hintText: 'Enter your remark',
+                                      hintText: 'Enter Remark',
+                                      hintStyle: TextStyle(fontSize: 10),
                                     ),
                                   ),
                                 ),
@@ -459,7 +385,7 @@ class _ExaminationPageState extends State<ExaminationPage> {
                             alignment: Alignment.centerRight,
                             child: ElevatedButton(
                               onPressed: _saveData,
-                              child: const Text('Save'),
+                              child: const Text('Done'),
                             ),
                           ),
                         ],

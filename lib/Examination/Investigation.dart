@@ -193,6 +193,7 @@ class _InvestigationDropdownState extends State<InvestigationDropdown> {
           child: ListTile(
             title: Text(selectedValue ?? 'Select Investigation'),
             trailing: Icon(Icons.arrow_drop_down),
+            
           ),
           itemBuilder: (context) {
             return [
@@ -280,72 +281,11 @@ class _InvestigationDropdownState extends State<InvestigationDropdown> {
           },
         ),
         if (selectedValue != null) ...[
-          Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: unitController,
-                  decoration: InputDecoration(
-                    labelText: 'Unit',
-                    isDense: true,
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-              ),
-              SizedBox(width: 8),
-              Expanded(
-                child: TextField(
-                  controller: frequencyController,
-                  decoration: InputDecoration(
-                    labelText: 'Frequency',
-                    isDense: true,
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-              ),
-              SizedBox(width: 8),
-              Expanded(
-                child: TextField(
-                  controller: durationController,
-                  decoration: InputDecoration(
-                    labelText: 'Duration',
-                    isDense: true,
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-              ),
-              SizedBox(width: 8),
-              Expanded(
-                child: TextField(
-                  controller: startDateController,
-                  decoration: InputDecoration(
-                    labelText: 'Start Date',
-                    isDense: true,
-                    border: OutlineInputBorder(),
-                  ),
-                  onTap: () {
-                    _selectDate(context);
-                  },
-                  readOnly: true,
-                ),
-              ),
-              SizedBox(width: 8),
-              Expanded(
-                child: TextField(
-                  controller: instructionController,
-                  decoration: InputDecoration(
-                    labelText: 'Instruction',
-                    isDense: true,
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-              ),
-              IconButton(
-                icon: Icon(Icons.check),
-                onPressed: _saveData,
-              ),
-            ],
+          IconButton(
+            icon: Icon(Icons.check),
+            onPressed: _saveData,
           ),
+        
         ],
 
         //display SavedData in a Card
@@ -359,11 +299,6 @@ class _InvestigationDropdownState extends State<InvestigationDropdown> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('Investigation: ${savedData!['Investigation']}', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold,color: Color.fromARGB(255, 2, 66, 130),)),
-                  Text('Unit: ${savedData!['Unit']}'),
-                  Text('Frequency: ${savedData!['Frequency']}'),
-                  Text('Duration: ${savedData!['Duration']}'),
-                  Text('Start Date: ${savedData!['Start Date']}'),
-                  Text('Instruction: ${savedData!['Instruction']}'),
                   Row(
                     children: [
                       IconButton(
@@ -372,7 +307,7 @@ class _InvestigationDropdownState extends State<InvestigationDropdown> {
                       ),
                       SizedBox(width: 30),
                       IconButton(
-                        icon: Icon(Icons.delete_forever),
+                        icon: Icon(Icons.delete_forever,color: Colors.red,),
                         onPressed: _deleteData,
                       ),
                     ],

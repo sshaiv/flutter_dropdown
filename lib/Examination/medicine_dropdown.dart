@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:intl/intl.dart';
@@ -188,7 +189,7 @@ class _MedicineDropdownState extends State<MedicineDropdown> {
           onSelected: _onSelect,
           child: ListTile(
             title: Text(selectedValue ?? 'Select Medicine'),
-            trailing: Icon(Icons.arrow_drop_down),
+            trailing: Icon(Icons.arrow_drop_down,size: 40,),
           ),
           itemBuilder: (context) {
             return [
@@ -276,79 +277,77 @@ class _MedicineDropdownState extends State<MedicineDropdown> {
           },
         ),
         if (selectedValue != null) ...[
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: unitController,
-                    decoration: InputDecoration(
-                      labelText: 'Unit',
-                      hintText: 'Enter unit', // Placeholder text
-                      isDense: true,
-                      border: OutlineInputBorder(),
-                    ),
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: unitController,
+                  decoration: InputDecoration(
+                    labelText: 'Unit',
+                    labelStyle: TextStyle(fontSize: 8),
+                    isDense: true,
+                    border: OutlineInputBorder(),
                   ),
                 ),
-                SizedBox(width: 8),
-                Expanded(
-                  child: TextField(
-                    controller: frequencyController,
-                    decoration: InputDecoration(
-                      labelText: 'Frequency',
-                      hintText: 'Enter frequency', // Placeholder text
-                      isDense: true,
-                      border: OutlineInputBorder(),
-                    ),
+              ),
+
+              SizedBox(width: 8),
+              Expanded(
+                child: TextField(
+                  controller: frequencyController,
+                  decoration: InputDecoration(
+                    labelText: 'Frequency',
+                    labelStyle: TextStyle(fontSize: 6),
+                    isDense: true,
+                    border: OutlineInputBorder(),
                   ),
                 ),
-                SizedBox(width: 8),
-                Expanded(
-                  child: TextField(
-                    controller: durationController,
-                    decoration: InputDecoration(
-                      labelText: 'Duration',
-                      hintText: 'Enter duration', // Placeholder text
-                      isDense: true,
-                      border: OutlineInputBorder(),
-                    ),
+              ),
+              SizedBox(width: 8),
+              Expanded(
+                child: TextField(
+                  controller: durationController,
+                  decoration: InputDecoration(
+                    labelText: 'Duration',
+                    labelStyle: TextStyle(fontSize: 6),
+                    isDense: true,
+                    border: OutlineInputBorder(),
                   ),
                 ),
-                SizedBox(width: 8),
-                Expanded(
-                  child: TextField(
-                    controller: startDateController,
-                    decoration: InputDecoration(
-                      labelText: 'Start Date',
-                      hintText: 'Select start date', // Placeholder text
-                      isDense: true,
-                      border: OutlineInputBorder(),
-                    ),
-                    onTap: () {
-                      _selectDate(context);
-                    },
-                    readOnly: true,
+              ),
+              SizedBox(width: 8),
+              Expanded(
+                child: TextField(
+                  controller: startDateController,
+                  decoration: InputDecoration(
+                    labelText: 'Start Date',
+                    labelStyle: TextStyle(fontSize: 6),
+                    isDense: true,
+                    border: OutlineInputBorder(),
+                  ),
+                  onTap: () {
+                    _selectDate(context);
+                  },
+                  readOnly: true,
+                ),
+              ),
+              SizedBox(width: 8),
+              Expanded(
+                child: TextField(
+                  controller: instructionController,
+                  decoration: InputDecoration(
+                    labelText: 'Instruction',
+                    labelStyle: TextStyle(fontSize: 6),
+                    isDense: true,
+                    border: OutlineInputBorder(),
                   ),
                 ),
-                SizedBox(width: 8),
-                Expanded(
-                  child: TextField(
-                    controller: instructionController,
-                    decoration: InputDecoration(
-                      labelText: 'Instruction',
-                      hintText: 'Enter instructions', // Placeholder text
-                      isDense: true,
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                ),
-                IconButton(
-                  icon: Icon(Icons.check),
-                  onPressed: _saveData,
-                ),
-              ],
-            ),
+              ),
+              IconButton(
+                icon: Icon(Icons.check),
+                onPressed: _saveData,
+              ),
+            ],
           ),
         ],
         // Display saved data in multiple cards
@@ -359,28 +358,31 @@ class _MedicineDropdownState extends State<MedicineDropdown> {
 
             return Card(
               child: ListTile(
-                title: Text(data['Medicine'] ?? ''),
+                title: Text(data['Medicine'] ?? '',style: TextStyle(color: Color.fromARGB(255, 2, 54, 107),fontWeight: FontWeight.bold,fontSize: 12),),
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Unit: ${data['Unit'] ?? ''}'),
-                    Text('Frequency: ${data['Frequency'] ?? ''}'),
-                    Text('Duration: ${data['Duration'] ?? ''}'),
-                    Text('Start Date: ${data['Start Date'] ?? ''}'),
-                    Text('Instruction: ${data['Instruction'] ?? ''}'),
+                    Text('Unit: ${data['Unit'] ?? ''} ',style: GoogleFonts.josefinSans(
+                      color: Colors.black,
+                      fontSize: 14,
+                    ),),
+                    Text('Frequency: ${data['Frequency'] ?? ''}',style:GoogleFonts.josefinSans(color:Colors.black,fontSize:14)),
+                    Text('Duration: ${data['Duration'] ?? ''}',style:GoogleFonts.josefinSans(color:Colors.black,fontSize:14)),
+                    Text('Start Date: ${data['Start Date'] ?? ''}',style:GoogleFonts.josefinSans(color:Colors.red,fontSize:14)),
+                    Text('Instruction: ${data['Instruction'] ?? ''}',style:GoogleFonts.josefinSans(color:Colors.black,fontSize:14)),
                   ],
                 ),
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    IconButton(
-                      icon: Icon(Icons.edit),
+                IconButton(
+                      icon: Icon(Icons.edit_note,color: Colors.black54,),
                       onPressed: () {
                         _editData(index);
                       },
                     ),
                     IconButton(
-                      icon: Icon(Icons.delete),
+                      icon: Icon(Icons.delete_forever,color: Colors.red,),
                       onPressed: () {
                         _deleteData(index);
                       },
