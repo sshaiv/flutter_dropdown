@@ -108,16 +108,17 @@ class _HomepageState extends State<Homepage> {
                                     width: 200,
                                     height: 50,
                                     decoration: BoxDecoration(
-                                      color: Colors.red.withOpacity(
-                                          0.2), // Very light red background
+                                      color:Colors.white.withOpacity(0.2),
+                                      // color: Colors.red.withOpacity(
+                                      //     0.2), // Very light red background
                                     ),
                                   ),
                                 ),
                                 // Image
                                 Image.asset(
                                   'assets/images/addpatientbtn.png', // Replace with your icon image
-                                  height: 100, // Adjust the size as needed
-                                  width: 150,
+                                  height: 50, // Adjust the size as needed
+                                  width: 75,
                                 ),
                               ],
                             ),

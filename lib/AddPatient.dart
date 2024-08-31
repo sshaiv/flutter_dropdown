@@ -446,9 +446,9 @@ class _AddPatientPageState extends State<AddPatientPage> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => const ExaminationPage(
-                                      name: 'shraddha',
-                                      age: 23,
-                                      gender: 'F',
+                                      name: 'xyz',
+                                      age: 40,
+                                      gender: 'Other',
                                     ), // Replace with the actual page widget
                                   ),
                                 );

@@ -3,29 +3,29 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:intl/intl.dart';
 
-class MedicineModel {
+class InvestigationModel {
   final double itemid;
   final String itemname;
 
-  MedicineModel({
+  InvestigationModel({
     required this.itemid,
     required this.itemname,
   });
 
-  factory MedicineModel.fromJson(Map<String, dynamic> json) => MedicineModel(
+  factory InvestigationModel.fromJson(Map<String, dynamic> json) => InvestigationModel(
     itemid: json["itemid"].toDouble(),
     itemname: json["itemname"],
   );
 }
 
-class MedicineDropdown extends StatefulWidget {
-  const MedicineDropdown({Key? key}) : super(key: key);
+class InvestigationDropdown extends StatefulWidget {
+  const InvestigationDropdown({Key? key}) : super(key: key);
 
   @override
-  _MedicineDropdownState createState() => _MedicineDropdownState();
+  _InvestigationDropdownState createState() => _InvestigationDropdownState();
 }
 
-class _MedicineDropdownState extends State<MedicineDropdown> {
+class _InvestigationDropdownState extends State<InvestigationDropdown> {
   final TextEditingController textEditingController = TextEditingController();
   String? selectedValue;
   List<String> items = [];
@@ -41,7 +41,7 @@ class _MedicineDropdownState extends State<MedicineDropdown> {
   final TextEditingController startDateController = TextEditingController();
   final TextEditingController instructionController = TextEditingController();
 
-  List<Map<String, String>> savedDataList = [];
+  Map<String, String>? savedData;
 
   @override
   void initState() {
@@ -63,10 +63,10 @@ class _MedicineDropdownState extends State<MedicineDropdown> {
         final List<dynamic> data = json.decode(json.decode(response.body));
         print(response.body);
 
-        final List<MedicineModel> medicines = data.map((item) => MedicineModel.fromJson(item)).toList();
-        print(medicines);
+        final List<InvestigationModel> investigations = data.map((item) => InvestigationModel.fromJson(item)).toList();
+        print(investigations);
 
-        allItems = medicines.map((e) => e.itemname).toList();
+        allItems = investigations.map((e) => e.itemname).toList();
         filterItems();
         isLoading = false;
         print(allItems);
@@ -137,16 +137,14 @@ class _MedicineDropdownState extends State<MedicineDropdown> {
 
   void _saveData() {
     setState(() {
-      final newEntry = {
-        'Medicine': selectedValue ?? '',
+      savedData = {
+        'Investigation': selectedValue ?? '',
         'Unit': unitController.text,
         'Frequency': frequencyController.text,
         'Duration': durationController.text,
         'Start Date': startDateController.text,
         'Instruction': instructionController.text,
       };
-
-      savedDataList.add(newEntry);
 
       // Clear all fields after saving
       selectedValue = null;
@@ -158,27 +156,33 @@ class _MedicineDropdownState extends State<MedicineDropdown> {
     });
   }
 
-  void _editData(int index) {
-    final selectedData = savedDataList[index];
-    setState(() {
-      selectedValue = selectedData['Medicine'];
-      unitController.text = selectedData['Unit'] ?? '';
-      frequencyController.text = selectedData['Frequency'] ?? '';
-      durationController.text = selectedData['Duration'] ?? '';
-      startDateController.text = selectedData['Start Date'] ?? '';
-      instructionController.text = selectedData['Instruction'] ?? '';
+  void _editData() {
+    if (savedData != null) {
+      setState(() {
+        selectedValue = savedData!['Investigation'];
+        unitController.text = savedData!['Unit'] ?? '';
+        frequencyController.text = savedData!['Frequency'] ?? '';
+        durationController.text = savedData!['Duration'] ?? '';
+        startDateController.text = savedData!['Start Date'] ?? '';
+        instructionController.text = savedData!['Instruction'] ?? '';
+      });
+    }
+  }
 
-      // Remove the old entry
-      savedDataList.removeAt(index);
+  void _deleteData() {
+    setState(() {
+      savedData = null;
+      selectedValue = null;
+      unitController.clear();
+      frequencyController.clear();
+      durationController.clear();
+      startDateController.clear();
+      instructionController.clear();
     });
   }
 
-  void _deleteData(int index) {
-    setState(() {
-      savedDataList.removeAt(index);
-    });
-  }
 
+  @override
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -187,7 +191,7 @@ class _MedicineDropdownState extends State<MedicineDropdown> {
         PopupMenuButton<String>(
           onSelected: _onSelect,
           child: ListTile(
-            title: Text(selectedValue ?? 'Select Medicine'),
+            title: Text(selectedValue ?? 'Select Investigation'),
             trailing: Icon(Icons.arrow_drop_down),
           ),
           itemBuilder: (context) {
@@ -276,122 +280,112 @@ class _MedicineDropdownState extends State<MedicineDropdown> {
           },
         ),
         if (selectedValue != null) ...[
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: unitController,
-                    decoration: InputDecoration(
-                      labelText: 'Unit',
-                      hintText: 'Enter unit', // Placeholder text
-                      isDense: true,
-                      border: OutlineInputBorder(),
-                    ),
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: unitController,
+                  decoration: InputDecoration(
+                    labelText: 'Unit',
+                    isDense: true,
+                    border: OutlineInputBorder(),
                   ),
                 ),
-                SizedBox(width: 8),
-                Expanded(
-                  child: TextField(
-                    controller: frequencyController,
-                    decoration: InputDecoration(
-                      labelText: 'Frequency',
-                      hintText: 'Enter frequency', // Placeholder text
-                      isDense: true,
-                      border: OutlineInputBorder(),
-                    ),
+              ),
+              SizedBox(width: 8),
+              Expanded(
+                child: TextField(
+                  controller: frequencyController,
+                  decoration: InputDecoration(
+                    labelText: 'Frequency',
+                    isDense: true,
+                    border: OutlineInputBorder(),
                   ),
                 ),
-                SizedBox(width: 8),
-                Expanded(
-                  child: TextField(
-                    controller: durationController,
-                    decoration: InputDecoration(
-                      labelText: 'Duration',
-                      hintText: 'Enter duration', // Placeholder text
-                      isDense: true,
-                      border: OutlineInputBorder(),
-                    ),
+              ),
+              SizedBox(width: 8),
+              Expanded(
+                child: TextField(
+                  controller: durationController,
+                  decoration: InputDecoration(
+                    labelText: 'Duration',
+                    isDense: true,
+                    border: OutlineInputBorder(),
                   ),
                 ),
-                SizedBox(width: 8),
-                Expanded(
-                  child: TextField(
-                    controller: startDateController,
-                    decoration: InputDecoration(
-                      labelText: 'Start Date',
-                      hintText: 'Select start date', // Placeholder text
-                      isDense: true,
-                      border: OutlineInputBorder(),
-                    ),
-                    onTap: () {
-                      _selectDate(context);
-                    },
-                    readOnly: true,
+              ),
+              SizedBox(width: 8),
+              Expanded(
+                child: TextField(
+                  controller: startDateController,
+                  decoration: InputDecoration(
+                    labelText: 'Start Date',
+                    isDense: true,
+                    border: OutlineInputBorder(),
+                  ),
+                  onTap: () {
+                    _selectDate(context);
+                  },
+                  readOnly: true,
+                ),
+              ),
+              SizedBox(width: 8),
+              Expanded(
+                child: TextField(
+                  controller: instructionController,
+                  decoration: InputDecoration(
+                    labelText: 'Instruction',
+                    isDense: true,
+                    border: OutlineInputBorder(),
                   ),
                 ),
-                SizedBox(width: 8),
-                Expanded(
-                  child: TextField(
-                    controller: instructionController,
-                    decoration: InputDecoration(
-                      labelText: 'Instruction',
-                      hintText: 'Enter instructions', // Placeholder text
-                      isDense: true,
-                      border: OutlineInputBorder(),
-                    ),
+              ),
+              IconButton(
+                icon: Icon(Icons.check),
+                onPressed: _saveData,
+              ),
+            ],
+          ),
+        ],
+
+        //display SavedData in a Card
+        if (savedData != null) ...[
+          Card(
+            margin: EdgeInsets.symmetric(vertical: 10),
+            elevation: 2,
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Investigation: ${savedData!['Investigation']}', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold,color: Color.fromARGB(255, 2, 66, 130),)),
+                  Text('Unit: ${savedData!['Unit']}'),
+                  Text('Frequency: ${savedData!['Frequency']}'),
+                  Text('Duration: ${savedData!['Duration']}'),
+                  Text('Start Date: ${savedData!['Start Date']}'),
+                  Text('Instruction: ${savedData!['Instruction']}'),
+                  Row(
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.edit),
+                        onPressed: _editData,
+                      ),
+                      SizedBox(width: 30),
+                      IconButton(
+                        icon: Icon(Icons.delete_forever),
+                        onPressed: _deleteData,
+                      ),
+                    ],
                   ),
-                ),
-                IconButton(
-                  icon: Icon(Icons.check),
-                  onPressed: _saveData,
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ],
-        // Display saved data in multiple cards
-        Column(
-          children: savedDataList.asMap().entries.map((entry) {
-            final index = entry.key;
-            final data = entry.value;
-
-            return Card(
-              child: ListTile(
-                title: Text(data['Medicine'] ?? ''),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Unit: ${data['Unit'] ?? ''}'),
-                    Text('Frequency: ${data['Frequency'] ?? ''}'),
-                    Text('Duration: ${data['Duration'] ?? ''}'),
-                    Text('Start Date: ${data['Start Date'] ?? ''}'),
-                    Text('Instruction: ${data['Instruction'] ?? ''}'),
-                  ],
-                ),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      icon: Icon(Icons.edit),
-                      onPressed: () {
-                        _editData(index);
-                      },
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.delete),
-                      onPressed: () {
-                        _deleteData(index);
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }).toList(),
-        ),
       ],
     );
   }
 }
+
+
+

@@ -108,7 +108,7 @@ class _ExaminationPageState extends State<ExaminationPage> {
       final String checkupData = _controller.text.isNotEmpty ? _controller.text : 'No data entered';
 
       // Print the checkup data to the console
-      print('Checkup Data: $checkupData');
+      print('Doctor Note: $checkupData');
 
       // Clear the input field after saving
       setState(() {
@@ -215,39 +215,60 @@ class _ExaminationPageState extends State<ExaminationPage> {
 
                   VitalData(controllers: controllers),
                   SizedBox(height:30),
+
                   //Add Check-Ups
-                  Padding(
-                    padding: const EdgeInsets.all(6.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        // Row containing TextField and Save button
-                        Row(
-                          children: [
-                            Expanded(
-                              child: TextField(
-                                controller: _controller,
-                                decoration: const InputDecoration(
-                                  border: OutlineInputBorder(),
-                                  labelText: 'Doctor Note',
-                                ),
-                                minLines: 1,
-                                maxLines: null,
+                  Container(
+                    child: Padding(
+                      padding: const EdgeInsets.all(6.0),
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              Image.asset(
+                                'assets/images/doc_note.png',
+                                width: 24,
+                                height: 24,
                               ),
-                            ),
-                            const SizedBox(width: 8),
-                            // Save button
-                            ElevatedButton(
-                              onPressed: _checkupData,
-                              child: const Text('Save'),
-                            ),
-                          ],
-                        ),
-                      ],
+                              const SizedBox(width: 15),
+                              Text(
+                                'Doctor Note ',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 10,),
+                          // Row containing TextField and Save button
+                          Row(
+                            children: [
+                              Expanded(
+                                child: TextField(
+                                  controller: _controller,
+                                  decoration: const InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    labelText: 'Doctor Note',
+                                  ),
+                                  minLines: 1,
+                                  maxLines: null,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              // Save button
+                              ElevatedButton(
+                                onPressed: _checkupData,
+                                child: const Text('Save'),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
 
-                  const SizedBox(height: 20),
+
+                   SizedBox(height: 20),
 
                  // Medicine Dropdown Section
                    Row(
@@ -262,6 +283,7 @@ class _ExaminationPageState extends State<ExaminationPage> {
                         'Medicine',
                         style: GoogleFonts.daysOne(
                           fontSize: 18,
+                          textStyle: TextStyle(color: Color.fromARGB(255, 154, 46, 38)),
                         ),
                       ),
                     ],
@@ -448,8 +470,6 @@ class _ExaminationPageState extends State<ExaminationPage> {
 
                   //Component portion below
                   ComponentPortion(onChiefComplaintsPressed: _handleChiefComplaintsPressed),
-               
-                   
                 ],
               ),
             ),
