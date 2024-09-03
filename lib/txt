@@ -44,6 +44,12 @@ class _MedicineDropdownState extends State<MedicineDropdown> {
 
   List<Map<String, String>> savedDataList = [];
 
+  final List<String> unitOptions = ['ml', 'mg', 'g', 'units', 'cal']; // Example options
+  final List<String> durationOptions = ['days', 'months', 'years']; // Example options
+
+  String? selectedUnit;
+  String? selectedDuration;
+
   @override
   void initState() {
     super.initState();
@@ -136,13 +142,12 @@ class _MedicineDropdownState extends State<MedicineDropdown> {
     }
   }
 
-
   void _saveData() async {
     final newEntry = {
       'Medicine': selectedValue ?? '',
-      'Unit': unitController.text,
+      'Unit': selectedUnit ?? '',
       'Frequency': frequencyController.text,
-      'Duration': durationController.text,
+      'Duration': selectedDuration ?? '',
       'Start Date': startDateController.text,
       'Instruction': instructionController.text,
     };
@@ -150,7 +155,7 @@ class _MedicineDropdownState extends State<MedicineDropdown> {
     try {
       // Send POST request to the server
       final response = await http.post(
-        Uri.parse('http://localhost:3000/saveData'),
+        Uri.parse('http://localhost:3000/saveData'), // Replace with your server URL
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -164,9 +169,9 @@ class _MedicineDropdownState extends State<MedicineDropdown> {
 
           // Clear all fields after saving
           selectedValue = null;
-          unitController.clear();
+          selectedUnit = null;
+          selectedDuration = null;
           frequencyController.clear();
-          durationController.clear();
           startDateController.clear();
           instructionController.clear();
         });
@@ -183,15 +188,13 @@ class _MedicineDropdownState extends State<MedicineDropdown> {
     }
   }
 
-
-
   void _editData(int index) {
     final selectedData = savedDataList[index];
     setState(() {
       selectedValue = selectedData['Medicine'];
-      unitController.text = selectedData['Unit'] ?? '';
+      selectedUnit = selectedData['Unit'] ?? '';
+      selectedDuration = selectedData['Duration'] ?? '';
       frequencyController.text = selectedData['Frequency'] ?? '';
-      durationController.text = selectedData['Duration'] ?? '';
       startDateController.text = selectedData['Start Date'] ?? '';
       instructionController.text = selectedData['Instruction'] ?? '';
 
@@ -215,7 +218,7 @@ class _MedicineDropdownState extends State<MedicineDropdown> {
           onSelected: _onSelect,
           child: ListTile(
             title: Text(selectedValue ?? 'Select Medicine'),
-            trailing: Icon(Icons.arrow_drop_down,size: 40,),
+            trailing: Icon(Icons.arrow_drop_down, size: 40),
           ),
           itemBuilder: (context) {
             return [
@@ -306,120 +309,128 @@ class _MedicineDropdownState extends State<MedicineDropdown> {
           Row(
             children: [
               Expanded(
-                child: TextField(
-                  controller: unitController,
+                child: DropdownButtonFormField<String>(
+                  value: selectedUnit,
                   decoration: InputDecoration(
                     labelText: 'Unit',
-                    labelStyle: TextStyle(fontSize: 8),
-                    isDense: true,
                     border: OutlineInputBorder(),
                   ),
+                  items: unitOptions.map((unit) {
+                    return DropdownMenuItem(
+                      value: unit,
+                      child: Text(unit),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      selectedUnit = value;
+                    });
+                  },
                 ),
               ),
-
               SizedBox(width: 8),
               Expanded(
-                child: TextField(
+                child: TextFormField(
                   controller: frequencyController,
                   decoration: InputDecoration(
                     labelText: 'Frequency',
-                    labelStyle: TextStyle(fontSize: 6),
-                    isDense: true,
                     border: OutlineInputBorder(),
                   ),
                 ),
-              ),
-              SizedBox(width: 8),
-              Expanded(
-                child: TextField(
-                  controller: durationController,
-                  decoration: InputDecoration(
-                    labelText: 'Duration',
-                    labelStyle: TextStyle(fontSize: 6),
-                    isDense: true,
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-              ),
-              SizedBox(width: 8),
-              Expanded(
-                child: TextField(
-                  controller: startDateController,
-                  decoration: InputDecoration(
-                    labelText: 'Start Date',
-                    labelStyle: TextStyle(fontSize: 6),
-                    isDense: true,
-                    border: OutlineInputBorder(),
-                  ),
-                  onTap: () {
-                    _selectDate(context);
-                  },
-                  readOnly: true,
-                ),
-              ),
-              SizedBox(width: 8),
-              Expanded(
-                child: TextField(
-                  controller: instructionController,
-                  decoration: InputDecoration(
-                    labelText: 'Instruction',
-                    labelStyle: TextStyle(fontSize: 6),
-                    isDense: true,
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-              ),
-              IconButton(
-                icon: Icon(Icons.check),
-                onPressed: _saveData,
               ),
             ],
           ),
-
-        ],
-        // Display saved data in multiple cards
-        Column(
-          children: savedDataList.asMap().entries.map((entry) {
+          SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(
+                child: DropdownButtonFormField<String>(
+                  value: selectedDuration,
+                  decoration: InputDecoration(
+                    labelText: 'Duration',
+                    border: OutlineInputBorder(),
+                  ),
+                  items: durationOptions.map((duration) {
+                    return DropdownMenuItem(
+                      value: duration,
+                      child: Text(duration),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      selectedDuration = value;
+                    });
+                  },
+                ),
+              ),
+              SizedBox(width: 8),
+              Expanded(
+                child: TextFormField(
+                  controller: startDateController,
+                  decoration: InputDecoration(
+                    labelText: 'Start Date',
+                    border: OutlineInputBorder(),
+                  ),
+                  onTap: () => _selectDate(context),
+                  readOnly: true,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 8),
+          TextFormField(
+            controller: instructionController,
+            decoration: InputDecoration(
+              labelText: 'Instruction',
+              border: OutlineInputBorder(),
+            ),
+          ),
+          SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: _saveData,
+            child: Text('Save'),
+          ),
+          SizedBox(height: 16),
+          Text(
+            'Saved Data:',
+            style: GoogleFonts.lato(
+              textStyle: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+          ),
+          SizedBox(height: 8),
+          ...savedDataList.asMap().entries.map((entry) {
             final index = entry.key;
             final data = entry.value;
-
             return Card(
+              margin: EdgeInsets.only(bottom: 8),
               child: ListTile(
-                title: Text(data['Medicine'] ?? '',style: TextStyle(color: Color.fromARGB(255, 2, 54, 107),fontWeight: FontWeight.bold,fontSize: 12),),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Unit: ${data['Unit'] ?? ''} ',style: GoogleFonts.josefinSans(
-                      color: Colors.black,
-                      fontSize: 14,
-                    ),),
-                    Text('Frequency: ${data['Frequency'] ?? ''}',style:GoogleFonts.josefinSans(color:Colors.black,fontSize:14)),
-                    Text('Duration: ${data['Duration'] ?? ''}',style:GoogleFonts.josefinSans(color:Colors.black,fontSize:14)),
-                    Text('Start Date: ${data['Start Date'] ?? ''}',style:GoogleFonts.josefinSans(color:Colors.red,fontSize:14)),
-                    Text('Instruction: ${data['Instruction'] ?? ''}',style:GoogleFonts.josefinSans(color:Colors.black,fontSize:14)),
-                  ],
+                title: Text(data['Medicine'] ?? ''),
+                subtitle: Text(
+                  'Unit: ${data['Unit'] ?? ''}, Frequency: ${data['Frequency'] ?? ''}, '
+                  'Duration: ${data['Duration'] ?? ''}, Start Date: ${data['Start Date'] ?? ''}, '
+                  'Instruction: ${data['Instruction'] ?? ''}',
                 ),
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     IconButton(
-                      icon: Icon(Icons.edit_note,color: Colors.black54,),
-                      onPressed: () {
-                        _editData(index);
-                      },
+                      icon: Icon(Icons.edit),
+                      onPressed: () => _editData(index),
                     ),
                     IconButton(
-                      icon: Icon(Icons.delete_forever,color: Colors.red,),
-                      onPressed: () {
-                        _deleteData(index);
-                      },
+                      icon: Icon(Icons.delete),
+                      onPressed: () => _deleteData(index),
                     ),
                   ],
                 ),
               ),
             );
           }).toList(),
-        ),
+        ],
       ],
     );
   }

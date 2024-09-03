@@ -50,8 +50,8 @@ class _InvestigationDropdownState extends State<InvestigationDropdown> {
   }
 
   Future<void> fetchData() async {
-    final url = Uri.parse('https://doctorapi.medonext.com/api/PathAPI/GetMedicine');
-
+    // final url = Uri.parse('https://doctorapi.medonext.com/api/PathAPI/GetMedicine');
+    final url = Uri.parse('#');
     try {
       setState(() {
         isLoading = true;

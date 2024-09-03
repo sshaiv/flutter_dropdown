@@ -1,10 +1,7 @@
-import 'dart:ui';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:medicine_doc/Examination/Footer.dart';
 import 'package:medicine_doc/Examination/Investigation.dart';
 import 'package:medicine_doc/Examination/component_portion.dart';
 import 'package:medicine_doc/Examination/medicine_dropdown.dart';
@@ -396,6 +393,9 @@ class _ExaminationPageState extends State<ExaminationPage> {
 
                   //Component portion below
                   ComponentPortion(onChiefComplaintsPressed: _handleChiefComplaintsPressed),
+SizedBox(height: 30,),
+
+                  const Footer(),
                 ],
               ),
             ),

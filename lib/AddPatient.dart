@@ -128,13 +128,13 @@ class _AddPatientPageState extends State<AddPatientPage> {
         title: const Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.content_paste_search, color: Colors.white), // White icon
+            Icon(Icons.content_paste_search, color: Colors.white), 
             SizedBox(width: 8),
             Text(
               'Patient Registration',
               style: TextStyle(
                 fontSize: 20,
-                color: Colors.white, // White text
+                color: Colors.white, 
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -145,24 +145,24 @@ class _AddPatientPageState extends State<AddPatientPage> {
       ),
       body: Stack(
         children: [
-          // Background image with blur effect
+          
           Positioned.fill(
             child: FittedBox(
               fit: BoxFit.cover,
               child: Image.asset(
-                'assets/images/background.png', // Replace with your image asset
+                'assets/images/background.png', 
                 color: Colors.black.withOpacity(0.3),
                 colorBlendMode: BlendMode.darken,
               ),
             ),
           ),
-          // Content with blur effect
+         
           Positioned.fill(
             child: SingleChildScrollView(
               child: Container(
                 decoration: BoxDecoration(
                   color:
-                  Colors.white.withOpacity(0.5), // Adjust opacity as needed
+                  Colors.white.withOpacity(0.5), 
                   borderRadius: BorderRadius.circular(20),
                 ),
                 margin: const EdgeInsets.all(16),
@@ -194,7 +194,7 @@ class _AddPatientPageState extends State<AddPatientPage> {
                                     child: TextField(
                                       controller: mobileNoController,
                                       decoration: const InputDecoration(
-                                        hintText: 'Mobile No.',
+                                        hintText: 'Search Mobile No.',
                                         border: InputBorder.none,
                                       ),
                                     ),
@@ -223,7 +223,7 @@ class _AddPatientPageState extends State<AddPatientPage> {
                                     labelText: 'Title',
                                     labelStyle: TextStyle(
                                       fontSize:
-                                      18, // Adjust label text size here
+                                      18, 
                                     ),
                                   ),
                                 ),
@@ -233,8 +233,8 @@ class _AddPatientPageState extends State<AddPatientPage> {
                                     labelText: 'First Name',
                                     labelStyle: TextStyle(
                                       fontSize:
-                                      18, // Adjust label text size here
-                                    ),
+                                      18, 
+                                      ),
                                   ),
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
@@ -249,7 +249,7 @@ class _AddPatientPageState extends State<AddPatientPage> {
                                     labelText: 'Last Name',
                                     labelStyle: TextStyle(
                                       fontSize:
-                                      18, // Adjust label text size here
+                                      18, 
                                     ),
                                   ),
                                   validator: (value) {
@@ -270,7 +270,7 @@ class _AddPatientPageState extends State<AddPatientPage> {
                                           hintText: age != null ? '$age' : '',
                                           labelStyle: const TextStyle(
                                             fontSize:
-                                            18, // Adjust label text size here
+                                            18, 
                                           ),
                                         ),
                                       ),
@@ -293,7 +293,7 @@ class _AddPatientPageState extends State<AddPatientPage> {
                                         'Select DOB',
                                         style: TextStyle(
                                           color: Colors
-                                              .red, // Change text color to red
+                                              .red, 
                                         ),
                                       ),
                                     ),
@@ -317,7 +317,7 @@ class _AddPatientPageState extends State<AddPatientPage> {
                                     labelText: 'Gender',
                                     labelStyle: TextStyle(
                                       fontSize:
-                                      18, // Adjust label text size here
+                                      18, 
                                     ),
                                   ),
                                 ),
@@ -328,8 +328,8 @@ class _AddPatientPageState extends State<AddPatientPage> {
                                     labelText: 'Mobile No.',
                                     labelStyle: TextStyle(
                                       fontSize:
-                                      18, // Adjust label text size here
-                                    ),
+                                      18, 
+                                      ),
                                   ),
                                   keyboardType: TextInputType.phone,
                                   validator: (value) {
@@ -348,7 +348,7 @@ class _AddPatientPageState extends State<AddPatientPage> {
                                     labelText: 'Aadhar',
                                     labelStyle: TextStyle(
                                       fontSize:
-                                      18, // Adjust label text size here
+                                      18, 
                                     ),
                                   ),
                                   validator: (value) {
@@ -367,7 +367,7 @@ class _AddPatientPageState extends State<AddPatientPage> {
                                     labelText: 'City',
                                     labelStyle: TextStyle(
                                       fontSize:
-                                      18, // Adjust label text size here
+                                      18, 
                                     ),
                                   ),
                                   validator: (value) {
@@ -395,7 +395,7 @@ class _AddPatientPageState extends State<AddPatientPage> {
                                     labelText: 'State',
                                     labelStyle: TextStyle(
                                       fontSize:
-                                      18, // Adjust label text size here
+                                      18, 
                                     ),
                                   ),
                                 ),
@@ -417,7 +417,7 @@ class _AddPatientPageState extends State<AddPatientPage> {
                                     labelText: 'Country',
                                     labelStyle: TextStyle(
                                       fontSize:
-                                      18, // Adjust label text size here
+                                      18, 
                                     ),
                                   ),
                                 ),
@@ -434,7 +434,7 @@ class _AddPatientPageState extends State<AddPatientPage> {
                               style: ElevatedButton.styleFrom(
                                 foregroundColor: Colors.white,
                                 backgroundColor: Colors
-                                    .red, // Change the button color to red
+                                    .red, 
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20),
                                 ),
@@ -449,15 +449,15 @@ class _AddPatientPageState extends State<AddPatientPage> {
                                       name: 'xyz',
                                       age: 40,
                                       gender: 'Other',
-                                    ), // Replace with the actual page widget
+                                    ), 
                                   ),
                                 );
                               },
                               child: const Text(
                                 'Next',
                                 style: TextStyle(
-                                  color: Colors.red, // Customize the text color
-                                  fontSize: 10, // Customize the text size
+                                  color: Colors.red, 
+                                  fontSize: 10, 
                                 ),
                               ),
                             )
