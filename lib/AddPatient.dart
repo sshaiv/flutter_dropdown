@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'Examination/Examination.dart';
 
 class AddPatientPage extends StatefulWidget {
@@ -58,7 +60,7 @@ class _AddPatientPageState extends State<AddPatientPage> {
 
   final TextEditingController mobileNoController = TextEditingController();
   final TextEditingController alternateMobileNoController =
-  TextEditingController(); // New field
+  TextEditingController();
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
   final TextEditingController aadharController = TextEditingController();
@@ -87,33 +89,47 @@ class _AddPatientPageState extends State<AddPatientPage> {
     });
   }
 
-  void handleSave() {
+  Future<void> handleSave() async {
     if (_formKey.currentState?.validate() ?? false) {
-      // Print data to the console
-      print('Mobile No.: ${mobileNoController.text}');
-      print('Alternate Mobile No.: ${alternateMobileNoController.text}');
-      print('Title: $selectedTitle');
-      print('First Name: ${firstNameController.text}');
-      print('Last Name: ${lastNameController.text}');
-      print('DOB: $selectedDOB');
-      print('Age: $age');
-      print('Gender: $selectedGender');
-      print('Aadhar: ${aadharController.text}');
-      print('City: ${cityController.text}');
-      print('State: $selectedState');
-      print('Country: $selectedCountry');
+      final url = Uri.parse('http://localhost:3000/patients'); // Replace with your API endpoint
+      final headers = {'Content-Type': 'application/json'};
+      final body = jsonEncode({
+        'mobileNo': mobileNoController.text,
+        'alternateMobileNo': alternateMobileNoController.text,
+        'title': selectedTitle,
+        'firstName': firstNameController.text,
+        'lastName': lastNameController.text,
+        'dob': selectedDOB?.toIso8601String(),
+        'age': age,
+        'gender': selectedGender,
+        'aadhar': aadharController.text,
+        'city': cityController.text,
+        'state': selectedState,
+        'country': selectedCountry,
+      });
 
-      // Navigate to the ExaminationPage with data
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ExaminationPage(
-            name: '${firstNameController.text} ${lastNameController.text}',
-            age: age ?? 0,
-            gender: selectedGender,
-          ),
-        ),
-      );
+      try {
+        final response = await http.post(url, headers: headers, body: body);
+
+        if (response.statusCode == 200) {
+          print('Patient data saved successfully');
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ExaminationPage(
+                name: '${firstNameController.text} ${lastNameController.text}',
+                age: age ?? 0,
+                gender: selectedGender,
+              ),
+            ),
+          );
+        } else {
+          print('Failed to save patient data. Status code: ${response.statusCode}');
+          print('Response body: ${response.body}');
+        }
+      } catch (e) {
+        print('Error saving patient data: $e');
+      }
     }
   }
 
@@ -121,20 +137,18 @@ class _AddPatientPageState extends State<AddPatientPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: BackButton(
-            color: Colors.white
-        ),
+        leading: BackButton(color: Colors.white),
         centerTitle: true,
         title: const Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.content_paste_search, color: Colors.white), 
+            Icon(Icons.content_paste_search, color: Colors.white),
             SizedBox(width: 8),
             Text(
               'Patient Registration',
               style: TextStyle(
                 fontSize: 20,
-                color: Colors.white, 
+                color: Colors.white,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -145,24 +159,21 @@ class _AddPatientPageState extends State<AddPatientPage> {
       ),
       body: Stack(
         children: [
-          
           Positioned.fill(
             child: FittedBox(
               fit: BoxFit.cover,
               child: Image.asset(
-                'assets/images/background.png', 
+                'assets/images/background.png',
                 color: Colors.black.withOpacity(0.3),
                 colorBlendMode: BlendMode.darken,
               ),
             ),
           ),
-         
           Positioned.fill(
             child: SingleChildScrollView(
               child: Container(
                 decoration: BoxDecoration(
-                  color:
-                  Colors.white.withOpacity(0.5), 
+                  color: Colors.white.withOpacity(0.5),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 margin: const EdgeInsets.all(16),
@@ -222,8 +233,7 @@ class _AddPatientPageState extends State<AddPatientPage> {
                                   decoration: const InputDecoration(
                                     labelText: 'Title',
                                     labelStyle: TextStyle(
-                                      fontSize:
-                                      18, 
+                                      fontSize: 18,
                                     ),
                                   ),
                                 ),
@@ -232,9 +242,8 @@ class _AddPatientPageState extends State<AddPatientPage> {
                                   decoration: const InputDecoration(
                                     labelText: 'First Name',
                                     labelStyle: TextStyle(
-                                      fontSize:
-                                      18, 
-                                      ),
+                                      fontSize: 18,
+                                    ),
                                   ),
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
@@ -248,8 +257,7 @@ class _AddPatientPageState extends State<AddPatientPage> {
                                   decoration: const InputDecoration(
                                     labelText: 'Last Name',
                                     labelStyle: TextStyle(
-                                      fontSize:
-                                      18, 
+                                      fontSize: 18,
                                     ),
                                   ),
                                   validator: (value) {
@@ -269,8 +277,7 @@ class _AddPatientPageState extends State<AddPatientPage> {
                                           labelText: 'Age',
                                           hintText: age != null ? '$age' : '',
                                           labelStyle: const TextStyle(
-                                            fontSize:
-                                            18, 
+                                            fontSize: 18,
                                           ),
                                         ),
                                       ),
@@ -292,8 +299,7 @@ class _AddPatientPageState extends State<AddPatientPage> {
                                       child: const Text(
                                         'Select DOB',
                                         style: TextStyle(
-                                          color: Colors
-                                              .red, 
+                                          color: Colors.red,
                                         ),
                                       ),
                                     ),
@@ -316,10 +322,10 @@ class _AddPatientPageState extends State<AddPatientPage> {
                                   decoration: const InputDecoration(
                                     labelText: 'Gender',
                                     labelStyle: TextStyle(
-                                      fontSize:
-                                      18, 
+                                      fontSize: 18,
                                     ),
                                   ),
+
                                 ),
                                 const SizedBox(height: 8),
                                 TextFormField(
@@ -327,56 +333,71 @@ class _AddPatientPageState extends State<AddPatientPage> {
                                   decoration: const InputDecoration(
                                     labelText: 'Mobile No.',
                                     labelStyle: TextStyle(
-                                      fontSize:
-                                      18, 
-                                      ),
+                                      fontSize: 18,
+                                    ),
                                   ),
                                   keyboardType: TextInputType.phone,
                                   validator: (value) {
+                                    // Check if the value is empty
                                     if (value == null || value.isEmpty) {
-                                      return 'Alternate Mobile No. is required';
-                                    } else if (value.length != 10) {
-                                      return 'Mobile No. must be 10 digits';
+                                      return 'Mobile number is required';
                                     }
+                                    // Check if the value is a 10-digit number
+                                    if (value.length != 10 || !RegExp(r'^\d{10}$').hasMatch(value)) {
+                                      return 'Please enter a valid 10-digit mobile number';
+                                    }
+                                    // If everything is fine, return null
                                     return null;
                                   },
                                 ),
+
                                 const SizedBox(height: 8),
                                 TextFormField(
                                   controller: aadharController,
                                   decoration: const InputDecoration(
                                     labelText: 'Aadhar',
                                     labelStyle: TextStyle(
-                                      fontSize:
-                                      18, 
+                                      fontSize: 18,
                                     ),
                                   ),
+                                  keyboardType: TextInputType.number,
                                   validator: (value) {
+                                    // Check if the value is empty
                                     if (value == null || value.isEmpty) {
-                                      return 'Aadhar is required';
-                                    } else if (value.length != 12) {
-                                      return 'Aadhar must be 12 digits';
+                                      return 'Aadhar number is required';
                                     }
+                                    // Check if the value is a 12-digit number
+                                    if (value.length != 12 || !RegExp(r'^\d{12}$').hasMatch(value)) {
+                                      return 'Please enter a valid 12-digit Aadhar number';
+                                    }
+                                    // If everything is fine, return null
                                     return null;
                                   },
                                 ),
+
                                 const SizedBox(height: 8),
                                 TextFormField(
                                   controller: cityController,
                                   decoration: const InputDecoration(
                                     labelText: 'City',
                                     labelStyle: TextStyle(
-                                      fontSize:
-                                      18, 
+                                      fontSize: 18,
                                     ),
                                   ),
                                   validator: (value) {
+                                    // Check if the value is empty
                                     if (value == null || value.isEmpty) {
                                       return 'City is required';
                                     }
+                                    // Check if the value contains only alphabetic characters
+                                    if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(value)) {
+                                      return 'Please enter a valid city name';
+                                    }
+                                    // If everything is fine, return null
                                     return null;
                                   },
                                 ),
+
                                 const SizedBox(height: 8),
                                 DropdownButtonFormField<String>(
                                   value: selectedState,
@@ -394,8 +415,7 @@ class _AddPatientPageState extends State<AddPatientPage> {
                                   decoration: const InputDecoration(
                                     labelText: 'State',
                                     labelStyle: TextStyle(
-                                      fontSize:
-                                      18, 
+                                      fontSize: 18,
                                     ),
                                   ),
                                 ),
@@ -416,51 +436,46 @@ class _AddPatientPageState extends State<AddPatientPage> {
                                   decoration: const InputDecoration(
                                     labelText: 'Country',
                                     labelStyle: TextStyle(
-                                      fontSize:
-                                      18, 
+                                      fontSize: 18,
                                     ),
                                   ),
                                 ),
+                                const SizedBox(height: 16),
+                                Center(
+                                  child: ElevatedButton.icon(
+                                    onPressed: handleSave,
+                                    // icon: const Icon(Icons.save),
+                                    label: const Text('Save',style: TextStyle(color: Colors.white),),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor:  Colors.red,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 24, vertical: 16),
+                                      textStyle:
+                                      const TextStyle(fontSize: 18),
+                                    ),
+                                  ),
+                                ),
+                                Center(
+                                  child: TextButton(
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => ExaminationPage(
+                                            name: 'xyz', // Assuming 'name' is a String
+                                            age: 0,      // Assuming 'age' is an int
+                                            gender: 'Male', // Assuming 'gender' is a String
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    child: const Text('Next'),
+                                  ),
+                                ),
+
+
                               ],
                             ),
-                            const SizedBox(height: 16),
-                            ElevatedButton.icon(
-                              onPressed: handleSave,
-                              icon: const Icon(Icons.save),
-                              label: const Text(
-                                'Save',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                foregroundColor: Colors.white,
-                                backgroundColor: Colors
-                                    .red, 
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                              ),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const ExaminationPage(
-                                      name: 'xyz',
-                                      age: 40,
-                                      gender: 'Other',
-                                    ), 
-                                  ),
-                                );
-                              },
-                              child: const Text(
-                                'Next',
-                                style: TextStyle(
-                                  color: Colors.red, 
-                                  fontSize: 10, 
-                                ),
-                              ),
-                            )
                           ],
                         ),
                       ),

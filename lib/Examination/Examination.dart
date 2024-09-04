@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:medicine_doc/Examination/Footer.dart';
 import 'package:medicine_doc/Examination/Investigation.dart';
 import 'package:medicine_doc/Examination/component_portion.dart';
 import 'package:medicine_doc/Examination/medicine_dropdown.dart';
-
-
 import 'package:medicine_doc/Examination/vital_data.dart';
+
+
 
 class ExaminationPage extends StatefulWidget {
   final String name;
@@ -395,7 +394,7 @@ class _ExaminationPageState extends State<ExaminationPage> {
                   ComponentPortion(onChiefComplaintsPressed: _handleChiefComplaintsPressed),
 SizedBox(height: 30,),
 
-                  const Footer(),
+
                 ],
               ),
             ),
