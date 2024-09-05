@@ -13,8 +13,7 @@ class ExaminationPage extends StatefulWidget {
   final int age;
   final String gender;
 
-  const ExaminationPage({
-    super.key,
+  ExaminationPage({
     required this.name,
     required this.age,
     required this.gender,

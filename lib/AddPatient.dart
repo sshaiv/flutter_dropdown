@@ -1,8 +1,6 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-
 import 'Examination/Examination.dart';
 
 class PatientRegistrationPage extends StatefulWidget {
@@ -21,14 +19,24 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
   final TextEditingController _cityController = TextEditingController();
   final TextEditingController _stateController = TextEditingController();
   final TextEditingController _countryController = TextEditingController();
+  final TextEditingController _dobController = TextEditingController();
 
   DateTime? _dob;
   String? _selectedTitle;
   String? _selectedGender;
   bool _showMoreDetails = false;
 
+  @override
+  void initState() {
+    super.initState();
+
+    _ageController.addListener(() {
+      _calculateDobFromAge(_ageController.text);
+    });
+  }
   final List<String> _titles = ['Mr', 'Mrs', 'Ms'];
   final List<String> _genders = ['Male', 'Female', 'Other'];
+
 
 
   Future<void> _submitForm() async {
@@ -63,6 +71,8 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
         final result = response.body;
         if (result == 'patient registered successfully') {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result)));
+
+          // Clear form fields and reset state
           _formKey.currentState?.reset();
           _mobileController.clear();
           _firstNameController.clear();
@@ -73,6 +83,7 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
           _cityController.clear();
           _stateController.clear();
           _countryController.clear();
+          _dobController.clear();
           setState(() {
             _dob = null;
             _selectedTitle = null;
@@ -101,6 +112,7 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
     }
   }
 
+
   void _selectDate() async {
     DateTime? pickedDate = await showDatePicker(
       context: context,
@@ -112,37 +124,26 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
     if (pickedDate != null) {
       setState(() {
         _dob = pickedDate;
-        // Calculate the age from the picked DOB
+        _dobController.text = "${_dob!.day.toString().padLeft(2, '0')}-${_dob!.month.toString().padLeft(2, '0')}-${_dob!.year}";
+
+        // Update the age field automatically
         _ageController.text = ((DateTime.now().difference(pickedDate).inDays) ~/ 365).toString();
       });
     }
   }
 
-  // void _selectDate() async {
-  //   DateTime? pickedDate = await showDatePicker(
-  //     context: context,
-  //     initialDate: _dob ?? DateTime.now(),
-  //     firstDate: DateTime(1900),
-  //     lastDate: DateTime.now(),
-  //   );
-  //
-  //   if (pickedDate != null) {
-  //     setState(() {
-  //       _dob = pickedDate;
-  //     });
-  //   }
-  // }
-
-    void _calculateDobFromAge(String age) {
+  void _calculateDobFromAge(String age) {
     if (age.isNotEmpty) {
       final int ageInt = int.tryParse(age) ?? 0;
       final now = DateTime.now();
       final calculatedDob = DateTime(now.year - ageInt, now.month, now.day);
       setState(() {
         _dob = calculatedDob;
+        _dobController.text = "${_dob!.day.toString().padLeft(2, '0')}-${_dob!.month.toString().padLeft(2, '0')}-${_dob!.year}";
       });
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -242,32 +243,7 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
                   return null;
                 },
               ),
-              // TextFormField(
-              //   controller: _ageController,
-              //   decoration: InputDecoration(labelText: 'Age'),
-              //   keyboardType: TextInputType.number,
-              //   validator: (value) {
-              //     if (value == null || value.isEmpty) {
-              //       return 'Age is required';
-              //     }
-              //     return null;
-              //   },
-              //   onChanged: (value) {
-              //     // Calculate DOB from age if needed
-              //   },
-              // ),
-              // GestureDetector(
-              //   onTap: _selectDate,
-              //   child: AbsorbPointer(
-              //     child: TextFormField(
-              //       decoration: InputDecoration(
-              //         labelText: 'DOB',
-              //         suffixIcon: Icon(Icons.calendar_today),
-              //         hintText: _dob == null ? 'Select Date' : _dob!.toLocal().toString().split(' ')[0],
-              //       ),
-              //     ),
-              //   ),
-              // ),
+
               TextFormField(
                 controller: _ageController,
                 decoration: InputDecoration(labelText: 'Age'),
@@ -278,20 +254,27 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
                   }
                   return null;
                 },
-                onChanged: _calculateDobFromAge,
               ),
               GestureDetector(
                 onTap: _selectDate,
                 child: AbsorbPointer(
                   child: TextFormField(
+                    controller: _dobController,  // Set the controller here
                     decoration: InputDecoration(
                       labelText: 'DOB',
                       suffixIcon: Icon(Icons.calendar_today),
-                      hintText: _dob == null ? 'Select Date' : _dob!.toLocal().toString().split(' ')[0],
                     ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Date of Birth is required';
+                      }
+                      return null;
+                    },
                   ),
                 ),
               ),
+
+
               DropdownButtonFormField<String>(
                 value: _selectedGender,
                 items: _genders.map((gender) {
@@ -306,7 +289,15 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
                   });
                 },
                 decoration: InputDecoration(labelText: 'Gender'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please select a gender';
+                  }
+                  return null;
+                },
               ),
+
+
               if (_showMoreDetails) ...[
                 TextFormField(
                   controller: _aadharController,
@@ -386,4 +377,6 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
     );
   }
 }
+
+
 
