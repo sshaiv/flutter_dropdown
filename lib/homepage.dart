@@ -85,7 +85,8 @@ class _HomepageState extends State<Homepage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const AddPatientPage()),
+                                builder: (context) =>  PatientRegistrationPage()),
+                                // builder: (context) =>  AddPatientPage()),
                           );
                         },
                         child: Container(
@@ -136,3 +137,4 @@ class _HomepageState extends State<Homepage> {
     );
   }
 }
+

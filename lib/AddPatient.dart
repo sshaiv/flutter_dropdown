@@ -1,135 +1,101 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'Examination/Examination.dart';
 
-class AddPatientPage extends StatefulWidget {
-  const AddPatientPage({super.key});
-
+class PatientRegistrationPage extends StatefulWidget {
   @override
-  State<AddPatientPage> createState() => _AddPatientPageState();
+  _PatientRegistrationPageState createState() => _PatientRegistrationPageState();
 }
 
-class _AddPatientPageState extends State<AddPatientPage> {
-  final List<String> titles = ['Ms.', 'Mrs.', 'Mr.'];
-  final List<String> genders = ['Male', 'Female', 'Other'];
-  final List<String> states = [
-    'Andhra Pradesh',
-    'Arunachal Pradesh',
-    'Assam',
-    'Bihar',
-    'Chhattisgarh',
-    'Goa',
-    'Gujarat',
-    'Haryana',
-    'Himachal Pradesh',
-    'Jharkhand',
-    'Karnataka',
-    'Kerala',
-    'Madhya Pradesh',
-    'Maharashtra',
-    'Manipur',
-    'Meghalaya',
-    'Mizoram',
-    'Nagaland',
-    'Odisha',
-    'Punjab',
-    'Rajasthan',
-    'Sikkim',
-    'Tamil Nadu',
-    'Telangana',
-    'Tripura',
-    'Uttar Pradesh',
-    'Uttarakhand',
-    'West Bengal'
-  ];
-  final List<String> countries = [
-    'India',
-    'United States',
-    'United Kingdom',
-    'Canada',
-    'Australia',
-    'Germany',
-    'France',
-    'Japan',
-    'China',
-    'Brazil'
-  ];
-
+class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
   final _formKey = GlobalKey<FormState>();
+  final TextEditingController _mobileController = TextEditingController();
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
+  final TextEditingController _ageController = TextEditingController();
+  final TextEditingController _aadharController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
+  final TextEditingController _cityController = TextEditingController();
+  final TextEditingController _stateController = TextEditingController();
+  final TextEditingController _countryController = TextEditingController();
 
-  final TextEditingController mobileNoController = TextEditingController();
-  final TextEditingController alternateMobileNoController =
-  TextEditingController();
-  final TextEditingController firstNameController = TextEditingController();
-  final TextEditingController lastNameController = TextEditingController();
-  final TextEditingController aadharController = TextEditingController();
-  final TextEditingController cityController = TextEditingController();
+  DateTime? _dob;
+  String? _selectedTitle;
+  String? _selectedGender;
+  bool _showMoreDetails = false;
 
-  String selectedTitle = 'Ms.';
-  String selectedGender = 'Male';
-  String selectedState = 'Andhra Pradesh';
-  String selectedCountry = 'India';
+  final List<String> _titles = ['Mr', 'Mrs', 'Ms'];
+  final List<String> _genders = ['Male', 'Female', 'Other'];
 
-  DateTime? selectedDOB;
-  int? age;
+  Future<void> _submitForm() async {
+    if (_formKey.currentState?.validate() ?? false) {
+      // Format the date as dd-MM-yyyy
+      final String? formattedDob = _dob != null
+          ? "${_dob!.day.toString().padLeft(2, '0')}-${_dob!.month.toString().padLeft(2, '0')}-${_dob!.year}"
+          : null;
 
-  @override
-  void initState() {
-    super.initState();
-    if (selectedDOB != null) {
-      age = DateTime.now().year - selectedDOB!.year;
+      final Map<String, String> formData = {
+        'mobileno': _mobileController.text,
+        'firstname': _firstNameController.text,
+        'lastname': _lastNameController.text,
+        'initialid': _selectedTitle ?? '',
+        'age': _ageController.text,
+        'dob': formattedDob ?? '',
+        'genderid': _selectedGender ?? '',
+        'aadharno': _aadharController.text,
+        'address': _addressController.text,
+        'cityid': _cityController.text,
+        'stateid': _stateController.text,
+        'countryid': _countryController.text,
+      };
+
+      try {
+        final response = await http.post(
+          Uri.parse('https://f71e-103-117-65-66.ngrok-free.app/frmOPDDoctorExamination/patientregister'),
+          headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+          body: formData,
+        );
+
+        final result = response.body;
+        if (result == 'patient registered successfully') {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result)));
+          _formKey.currentState?.reset();
+          _mobileController.clear();
+          _firstNameController.clear();
+          _lastNameController.clear();
+          _ageController.clear();
+          _aadharController.clear();
+          _addressController.clear();
+          _cityController.clear();
+          _stateController.clear();
+          _countryController.clear();
+          setState(() {
+            _dob = null;
+            _selectedTitle = null;
+            _selectedGender = null;
+            _showMoreDetails = false;
+          });
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result)));
+        }
+      } catch (error) {
+        print('Error: $error');
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('An error occurred while registering the patient.')));
+      }
     }
   }
 
-  void calculateAge(DateTime dob) {
-    setState(() {
-      selectedDOB = dob;
-      age = DateTime.now().year - dob.year;
-    });
-  }
+  void _selectDate() async {
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: _dob ?? DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    );
 
-  Future<void> handleSave() async {
-    if (_formKey.currentState?.validate() ?? false) {
-      final url = Uri.parse('http://localhost:3000/patients'); // Replace with your API endpoint
-      final headers = {'Content-Type': 'application/json'};
-      final body = jsonEncode({
-        'mobileNo': mobileNoController.text,
-        'alternateMobileNo': alternateMobileNoController.text,
-        'title': selectedTitle,
-        'firstName': firstNameController.text,
-        'lastName': lastNameController.text,
-        'dob': selectedDOB?.toIso8601String(),
-        'age': age,
-        'gender': selectedGender,
-        'aadhar': aadharController.text,
-        'city': cityController.text,
-        'state': selectedState,
-        'country': selectedCountry,
+    if (pickedDate != null) {
+      setState(() {
+        _dob = pickedDate;
       });
-
-      try {
-        final response = await http.post(url, headers: headers, body: body);
-
-        if (response.statusCode == 200) {
-          print('Patient data saved successfully');
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ExaminationPage(
-                name: '${firstNameController.text} ${lastNameController.text}',
-                age: age ?? 0,
-                gender: selectedGender,
-              ),
-            ),
-          );
-        } else {
-          print('Failed to save patient data. Status code: ${response.statusCode}');
-          print('Response body: ${response.body}');
-        }
-      } catch (e) {
-        print('Error saving patient data: $e');
-      }
     }
   }
 
@@ -137,355 +103,153 @@ class _AddPatientPageState extends State<AddPatientPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: BackButton(color: Colors.white),
-        centerTitle: true,
-        title: const Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.content_paste_search, color: Colors.white),
-            SizedBox(width: 8),
-            Text(
-              'Patient Registration',
-              style: TextStyle(
-                fontSize: 20,
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-        backgroundColor: const Color.fromARGB(255, 2, 66, 130),
-        elevation: 0,
+        title: Text('Patient Registration'),
       ),
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: FittedBox(
-              fit: BoxFit.cover,
-              child: Image.asset(
-                'assets/images/background.png',
-                color: Colors.black.withOpacity(0.3),
-                colorBlendMode: BlendMode.darken,
-              ),
-            ),
-          ),
-          Positioned.fill(
-            child: SingleChildScrollView(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.5),
-                  borderRadius: BorderRadius.circular(20),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            children: [
+              TextFormField(
+                controller: _mobileController,
+                decoration: InputDecoration(
+                  labelText: 'Mobile Number',
+                  hintText: 'Please Enter a Valid Contact Number',
                 ),
-                margin: const EdgeInsets.all(16),
-                padding: const EdgeInsets.all(16.0),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                color: Colors.red.withOpacity(0.3),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                children: [
-                                  const Icon(Icons.search, color: Colors.white),
-                                  const SizedBox(width: 8),
-                                  Expanded(
-                                    child: TextField(
-                                      controller: mobileNoController,
-                                      decoration: const InputDecoration(
-                                        hintText: 'Search Mobile No.',
-                                        border: InputBorder.none,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                DropdownButtonFormField<String>(
-                                  value: selectedTitle,
-                                  items: titles.map((title) {
-                                    return DropdownMenuItem(
-                                      value: title,
-                                      child: Text(title),
-                                    );
-                                  }).toList(),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      selectedTitle = value!;
-                                    });
-                                  },
-                                  decoration: const InputDecoration(
-                                    labelText: 'Title',
-                                    labelStyle: TextStyle(
-                                      fontSize: 18,
-                                    ),
-                                  ),
-                                ),
-                                TextFormField(
-                                  controller: firstNameController,
-                                  decoration: const InputDecoration(
-                                    labelText: 'First Name',
-                                    labelStyle: TextStyle(
-                                      fontSize: 18,
-                                    ),
-                                  ),
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'First Name is required';
-                                    }
-                                    return null;
-                                  },
-                                ),
-                                TextFormField(
-                                  controller: lastNameController,
-                                  decoration: const InputDecoration(
-                                    labelText: 'Last Name',
-                                    labelStyle: TextStyle(
-                                      fontSize: 18,
-                                    ),
-                                  ),
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Last Name is required';
-                                    }
-                                    return null;
-                                  },
-                                ),
-                                const SizedBox(height: 8),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: TextFormField(
-                                        readOnly: true,
-                                        decoration: InputDecoration(
-                                          labelText: 'Age',
-                                          hintText: age != null ? '$age' : '',
-                                          labelStyle: const TextStyle(
-                                            fontSize: 18,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 16),
-                                    ElevatedButton(
-                                      onPressed: () async {
-                                        DateTime? pickedDate =
-                                        await showDatePicker(
-                                          context: context,
-                                          initialDate: DateTime.now(),
-                                          firstDate: DateTime(1900),
-                                          lastDate: DateTime.now(),
-                                        );
-                                        if (pickedDate != null) {
-                                          calculateAge(pickedDate);
-                                        }
-                                      },
-                                      child: const Text(
-                                        'Select DOB',
-                                        style: TextStyle(
-                                          color: Colors.red,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 8),
-                                DropdownButtonFormField<String>(
-                                  value: selectedGender,
-                                  items: genders.map((gender) {
-                                    return DropdownMenuItem(
-                                      value: gender,
-                                      child: Text(gender),
-                                    );
-                                  }).toList(),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      selectedGender = value!;
-                                    });
-                                  },
-                                  decoration: const InputDecoration(
-                                    labelText: 'Gender',
-                                    labelStyle: TextStyle(
-                                      fontSize: 18,
-                                    ),
-                                  ),
-
-                                ),
-                                const SizedBox(height: 8),
-                                TextFormField(
-                                  controller: alternateMobileNoController,
-                                  decoration: const InputDecoration(
-                                    labelText: 'Mobile No.',
-                                    labelStyle: TextStyle(
-                                      fontSize: 18,
-                                    ),
-                                  ),
-                                  keyboardType: TextInputType.phone,
-                                  validator: (value) {
-                                    // Check if the value is empty
-                                    if (value == null || value.isEmpty) {
-                                      return 'Mobile number is required';
-                                    }
-                                    // Check if the value is a 10-digit number
-                                    if (value.length != 10 || !RegExp(r'^\d{10}$').hasMatch(value)) {
-                                      return 'Please enter a valid 10-digit mobile number';
-                                    }
-                                    // If everything is fine, return null
-                                    return null;
-                                  },
-                                ),
-
-                                const SizedBox(height: 8),
-                                TextFormField(
-                                  controller: aadharController,
-                                  decoration: const InputDecoration(
-                                    labelText: 'Aadhar',
-                                    labelStyle: TextStyle(
-                                      fontSize: 18,
-                                    ),
-                                  ),
-                                  keyboardType: TextInputType.number,
-                                  validator: (value) {
-                                    // Check if the value is empty
-                                    if (value == null || value.isEmpty) {
-                                      return 'Aadhar number is required';
-                                    }
-                                    // Check if the value is a 12-digit number
-                                    if (value.length != 12 || !RegExp(r'^\d{12}$').hasMatch(value)) {
-                                      return 'Please enter a valid 12-digit Aadhar number';
-                                    }
-                                    // If everything is fine, return null
-                                    return null;
-                                  },
-                                ),
-
-                                const SizedBox(height: 8),
-                                TextFormField(
-                                  controller: cityController,
-                                  decoration: const InputDecoration(
-                                    labelText: 'City',
-                                    labelStyle: TextStyle(
-                                      fontSize: 18,
-                                    ),
-                                  ),
-                                  validator: (value) {
-                                    // Check if the value is empty
-                                    if (value == null || value.isEmpty) {
-                                      return 'City is required';
-                                    }
-                                    // Check if the value contains only alphabetic characters
-                                    if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(value)) {
-                                      return 'Please enter a valid city name';
-                                    }
-                                    // If everything is fine, return null
-                                    return null;
-                                  },
-                                ),
-
-                                const SizedBox(height: 8),
-                                DropdownButtonFormField<String>(
-                                  value: selectedState,
-                                  items: states.map((state) {
-                                    return DropdownMenuItem(
-                                      value: state,
-                                      child: Text(state),
-                                    );
-                                  }).toList(),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      selectedState = value!;
-                                    });
-                                  },
-                                  decoration: const InputDecoration(
-                                    labelText: 'State',
-                                    labelStyle: TextStyle(
-                                      fontSize: 18,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                DropdownButtonFormField<String>(
-                                  value: selectedCountry,
-                                  items: countries.map((country) {
-                                    return DropdownMenuItem(
-                                      value: country,
-                                      child: Text(country),
-                                    );
-                                  }).toList(),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      selectedCountry = value!;
-                                    });
-                                  },
-                                  decoration: const InputDecoration(
-                                    labelText: 'Country',
-                                    labelStyle: TextStyle(
-                                      fontSize: 18,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 16),
-                                Center(
-                                  child: ElevatedButton.icon(
-                                    onPressed: handleSave,
-                                    // icon: const Icon(Icons.save),
-                                    label: const Text('Save',style: TextStyle(color: Colors.white),),
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor:  Colors.red,
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 24, vertical: 16),
-                                      textStyle:
-                                      const TextStyle(fontSize: 18),
-                                    ),
-                                  ),
-                                ),
-                                Center(
-                                  child: TextButton(
-                                    onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => ExaminationPage(
-                                            name: 'xyz', // Assuming 'name' is a String
-                                            age: 0,      // Assuming 'age' is an int
-                                            gender: 'Male', // Assuming 'gender' is a String
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                    child: const Text('Next'),
-                                  ),
-                                ),
-
-
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                keyboardType: TextInputType.phone,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Mobile Number is required';
+                  }
+                  return null;
+                },
+              ),
+              DropdownButtonFormField<String>(
+                value: _selectedTitle,
+                items: _titles.map((title) {
+                  return DropdownMenuItem(
+                    value: title,
+                    child: Text(title),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    _selectedTitle = value;
+                  });
+                },
+                decoration: InputDecoration(labelText: 'Title'),
+              ),
+              TextFormField(
+                controller: _firstNameController,
+                decoration: InputDecoration(labelText: 'First Name'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'First Name is required';
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: _lastNameController,
+                decoration: InputDecoration(labelText: 'Last Name'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Last Name is required';
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: _ageController,
+                decoration: InputDecoration(labelText: 'Age'),
+                keyboardType: TextInputType.number,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Age is required';
+                  }
+                  return null;
+                },
+                onChanged: (value) {
+                  // Calculate DOB from age if needed
+                },
+              ),
+              GestureDetector(
+                onTap: _selectDate,
+                child: AbsorbPointer(
+                  child: TextFormField(
+                    decoration: InputDecoration(
+                      labelText: 'DOB',
+                      suffixIcon: Icon(Icons.calendar_today),
+                      hintText: _dob == null ? 'Select Date' : _dob!.toLocal().toString().split(' ')[0],
+                    ),
                   ),
                 ),
               ),
-            ),
+              DropdownButtonFormField<String>(
+                value: _selectedGender,
+                items: _genders.map((gender) {
+                  return DropdownMenuItem(
+                    value: gender,
+                    child: Text(gender),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    _selectedGender = value;
+                  });
+                },
+                decoration: InputDecoration(labelText: 'Gender'),
+              ),
+              if (_showMoreDetails) ...[
+                TextFormField(
+                  controller: _aadharController,
+                  decoration: InputDecoration(labelText: 'Aadhar No'),
+                ),
+                TextFormField(
+                  controller: _addressController,
+                  decoration: InputDecoration(labelText: 'Address'),
+                ),
+                TextFormField(
+                  controller: _cityController,
+                  decoration: InputDecoration(labelText: 'City'),
+                ),
+                TextFormField(
+                  controller: _stateController,
+                  decoration: InputDecoration(labelText: 'State'),
+                ),
+                TextFormField(
+                  controller: _countryController,
+                  decoration: InputDecoration(labelText: 'Country'),
+                ),
+              ],
+              TextButton(
+                onPressed: () {
+                  setState(() {
+                    _showMoreDetails = !_showMoreDetails;
+                  });
+                },
+                child: Text(_showMoreDetails ? '- Remove Details' : '+ Add More Details'),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ElevatedButton(
+                    onPressed: _submitForm,
+                    child: Text('Create'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      // Handle modify action
+                    },
+                    child: Text('Modify'),
+                  ),
+                ],
+              ),
+              // Table for displaying patient data can be implemented if needed
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
