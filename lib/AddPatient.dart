@@ -1,5 +1,9 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+
+import 'Examination/Examination.dart';
 
 class PatientRegistrationPage extends StatefulWidget {
   @override
@@ -25,6 +29,7 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
 
   final List<String> _titles = ['Mr', 'Mrs', 'Ms'];
   final List<String> _genders = ['Male', 'Female', 'Other'];
+
 
   Future<void> _submitForm() async {
     if (_formKey.currentState?.validate() ?? false) {
@@ -74,6 +79,18 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
             _selectedGender = null;
             _showMoreDetails = false;
           });
+
+          // Navigate to ExaminationPage upon successful registration
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ExaminationPage(
+                name: '${_firstNameController.text} ${_lastNameController.text}',
+                age: int.tryParse(_ageController.text) ?? 0,
+                gender: _selectedGender ?? '',
+              ),
+            ),
+          );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result)));
         }
@@ -95,6 +112,34 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
     if (pickedDate != null) {
       setState(() {
         _dob = pickedDate;
+        // Calculate the age from the picked DOB
+        _ageController.text = ((DateTime.now().difference(pickedDate).inDays) ~/ 365).toString();
+      });
+    }
+  }
+
+  // void _selectDate() async {
+  //   DateTime? pickedDate = await showDatePicker(
+  //     context: context,
+  //     initialDate: _dob ?? DateTime.now(),
+  //     firstDate: DateTime(1900),
+  //     lastDate: DateTime.now(),
+  //   );
+  //
+  //   if (pickedDate != null) {
+  //     setState(() {
+  //       _dob = pickedDate;
+  //     });
+  //   }
+  // }
+
+    void _calculateDobFromAge(String age) {
+    if (age.isNotEmpty) {
+      final int ageInt = int.tryParse(age) ?? 0;
+      final now = DateTime.now();
+      final calculatedDob = DateTime(now.year - ageInt, now.month, now.day);
+      setState(() {
+        _dob = calculatedDob;
       });
     }
   }
@@ -102,29 +147,66 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Patient Registration'),
+      appBar: AppBar
+        (
+        leading: BackButton(color: Colors.white),
+        centerTitle: true,
+        title: const Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.content_paste_search, color: Colors.white),
+            SizedBox(width: 8),
+            Text(
+              'Patient Registration',
+              style: TextStyle(
+                fontSize: 20,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: const Color.fromARGB(255, 2, 66, 130),
+        elevation: 0,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(50.0),
         child: Form(
           key: _formKey,
           child: ListView(
             children: [
-              TextFormField(
-                controller: _mobileController,
-                decoration: InputDecoration(
-                  labelText: 'Mobile Number',
-                  hintText: 'Please Enter a Valid Contact Number',
+
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.red.withOpacity(0.3), // Similar red background with opacity
+                  borderRadius: BorderRadius.circular(10), // Rounded corners
                 ),
-                keyboardType: TextInputType.phone,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Mobile Number is required';
-                  }
-                  return null;
-                },
+                padding: const EdgeInsets.all(8.0), // Padding inside the container
+                child: Row(
+                  children: [
+                    const Icon(Icons.search, color: Colors.white), // Icon for mobile number
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: TextFormField(
+                        controller: _mobileController,
+                        decoration: const InputDecoration(
+                          labelText: 'Mobile Number',
+                          // hintText: 'Please Enter a Valid Contact Number',
+                          border: InputBorder.none, // No border for the TextFormField
+                        ),
+                        keyboardType: TextInputType.phone,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Mobile Number is required';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                  ],
+                ),
               ),
+
               DropdownButtonFormField<String>(
                 value: _selectedTitle,
                 items: _titles.map((title) {
@@ -160,6 +242,32 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
                   return null;
                 },
               ),
+              // TextFormField(
+              //   controller: _ageController,
+              //   decoration: InputDecoration(labelText: 'Age'),
+              //   keyboardType: TextInputType.number,
+              //   validator: (value) {
+              //     if (value == null || value.isEmpty) {
+              //       return 'Age is required';
+              //     }
+              //     return null;
+              //   },
+              //   onChanged: (value) {
+              //     // Calculate DOB from age if needed
+              //   },
+              // ),
+              // GestureDetector(
+              //   onTap: _selectDate,
+              //   child: AbsorbPointer(
+              //     child: TextFormField(
+              //       decoration: InputDecoration(
+              //         labelText: 'DOB',
+              //         suffixIcon: Icon(Icons.calendar_today),
+              //         hintText: _dob == null ? 'Select Date' : _dob!.toLocal().toString().split(' ')[0],
+              //       ),
+              //     ),
+              //   ),
+              // ),
               TextFormField(
                 controller: _ageController,
                 decoration: InputDecoration(labelText: 'Age'),
@@ -170,9 +278,7 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
                   }
                   return null;
                 },
-                onChanged: (value) {
-                  // Calculate DOB from age if needed
-                },
+                onChanged: _calculateDobFromAge,
               ),
               GestureDetector(
                 onTap: _selectDate,
@@ -235,14 +341,38 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red
+                    ),
                     onPressed: _submitForm,
-                    child: Text('Create'),
+                    child: Text('Create',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),
+
                   ),
                   ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                    ),
                     onPressed: () {
                       // Handle modify action
                     },
-                    child: Text('Modify'),
+                    child: Text('Modify',style: TextStyle(color:Colors.white,fontWeight: FontWeight.bold),),
+                  ),
+                  Center(
+                    child: TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ExaminationPage(
+                              name: 'xyz', // Assuming 'name' is a String
+                              age: 0,      // Assuming 'age' is an int
+                              gender: 'Male', // Assuming 'gender' is a String
+                            ),
+                          ),
+                        );
+                      },
+                      child: const Text('Next'),
+                    ),
                   ),
                 ],
               ),
@@ -251,6 +381,9 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
           ),
         ),
       ),
+
+
     );
   }
 }
+
