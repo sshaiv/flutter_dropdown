@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:medicine_doc/Examination/Investigation.dart';
 import 'package:medicine_doc/Examination/component_portion.dart';
 import 'package:medicine_doc/Examination/medicine_dropdown.dart';
 import 'package:medicine_doc/Examination/vital_data.dart';
-
-
 
 class ExaminationPage extends StatefulWidget {
   final String name;
@@ -23,109 +20,81 @@ class ExaminationPage extends StatefulWidget {
   _ExaminationPageState createState() => _ExaminationPageState();
 }
 
-
 class _ExaminationPageState extends State<ExaminationPage> {
   // Controller to manage the text input
   final TextEditingController _controller = TextEditingController();
 
-  //Component Popup
-
-  //Follow up
+  // Follow up
   DateTime? _selectedDate;
   final TextEditingController _remarkController = TextEditingController();
 
-
-  @override
-  void initState() {
-    super.initState();
-    // fetchData();
-  }
-
-  final TextEditingController textEditingController = TextEditingController();
-  String? selectedValue = "1 2 3 100mg Tablet (4'S)";
-
-
-  // Define a list of TextEditingControllers for each input field
-  final List<TextEditingController> controllers =
-  List.generate(10, (index) => TextEditingController());
-
-  List<String> items = ["1 2 3 100mg Tablet (4'S)"];
-
-  
+  bool _isFullView = false; // Lite view is default, so start with false
 
   @override
   void dispose() {
-    textEditingController.dispose();
-    // Dispose all controllers when the widget is disposed
-    for (var controller in controllers) {
-      controller.dispose();
-    }
-    super.dispose();
-
-    // Dispose the controller when the widget is disposed
     _controller.dispose();
+    _remarkController.dispose();
     super.dispose();
   }
 
-
-  @override
-  Widget build(BuildContext context) {
-
-
-    // Function to open date picker
-    Future<void> _selectDate(BuildContext context) async {
-      final DateTime? pickedDate = await showDatePicker(
-        context: context,
-        initialDate: DateTime.now(),
-        firstDate: DateTime(2000),
-        lastDate: DateTime(2101),
-      );
-      if (pickedDate != null && pickedDate != _selectedDate)
-        setState(() {
-          _selectedDate = pickedDate;
-        });
-    }
-
-    // save follow up data
-    void _saveData() {
-      final String date = _selectedDate != null ? _selectedDate.toString() : 'No date selected';
-      final String remark = _remarkController.text.isNotEmpty ? _remarkController.text : 'No remark entered';
-
-      // Print data to console
-      print('Date: $date');
-      print('Remark: $remark');
-
-      // Clear fields
+  // Function to open date picker
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (pickedDate != null && pickedDate != _selectedDate)
       setState(() {
-        _selectedDate = null;
-        _remarkController.clear();
+        _selectedDate = pickedDate;
       });
-    }
+  }
 
+  // Save follow-up data
+  void _saveData() {
+    final String date = _selectedDate != null ? _selectedDate.toString() : 'No date selected';
+    final String remark = _remarkController.text.isNotEmpty ? _remarkController.text : 'No remark entered';
 
-    // Define the _checkupData method
-    void _checkupData() {
-      final String checkupData = _controller.text.isNotEmpty ? _controller.text : 'No data entered';
+    // Print data to console
+    print('Date: $date');
+    print('Remark: $remark');
 
-      // Print the checkup data to the console
-      print('Doctor Note: $checkupData');
+    // Clear fields
+    setState(() {
+      _selectedDate = null;
+      _remarkController.clear();
+    });
+  }
 
-      // Clear the input field after saving
-      setState(() {
-        _controller.clear();
-      });
-    }
+  // Define the _checkupData method
+  void _checkupData() {
+    final String checkupData = _controller.text.isNotEmpty ? _controller.text : 'No data entered';
 
-      void _handleChiefComplaintsPressed() {
+    // Print the checkup data to the console
+    print('Doctor Note: $checkupData');
+
+    // Clear the input field after saving
+    setState(() {
+      _controller.clear();
+    });
+  }
+
+  void _handleChiefComplaintsPressed() {
     print('Chief Complaints pressed');
   }
 
-    
+  void _toggleView() {
+    setState(() {
+      _isFullView = !_isFullView;
+    });
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title:Text("Examination"),
-
+        title: Text("Examination"),
       ),
       body: Stack(
         children: [
@@ -140,7 +109,6 @@ class _ExaminationPageState extends State<ExaminationPage> {
               ),
             ),
           ),
-
           // Content
           Positioned.fill(
             child: SingleChildScrollView(
@@ -148,6 +116,8 @@ class _ExaminationPageState extends State<ExaminationPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+
+                  // Patient Details
                   Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
@@ -196,9 +166,7 @@ class _ExaminationPageState extends State<ExaminationPage> {
                                 fontSize: 18,
                               ),
                             ),
-                            const SizedBox(
-                              width: 10,
-                            ),
+                            const SizedBox(width: 10),
                             Text(
                               ' ,  ${widget.gender} ) ',
                               style: GoogleFonts.josefinSans(
@@ -213,10 +181,11 @@ class _ExaminationPageState extends State<ExaminationPage> {
                   ),
                   const SizedBox(height: 16),
 
-                  VitalData(controllers: controllers),
-                  SizedBox(height:30),
+                  // Vital Data
+                  VitalData(controllers: List.generate(10, (index) => TextEditingController())),
+                  const SizedBox(height: 10),
 
-                  //Add Check-Ups
+                  // Add Check-Ups
                   Container(
                     child: Padding(
                       padding: const EdgeInsets.all(6.0),
@@ -239,7 +208,7 @@ class _ExaminationPageState extends State<ExaminationPage> {
                               ),
                             ],
                           ),
-                          SizedBox(height: 10,),
+                          const SizedBox(height: 10),
                           // Row containing TextField and Save button
                           Row(
                             children: [
@@ -267,11 +236,19 @@ class _ExaminationPageState extends State<ExaminationPage> {
                       ),
                     ),
                   ),
-                   SizedBox(height: 20),
+                  const SizedBox(height: 20),
+                  // ComponentPortion visibility based on _isFullView
+                  if (_isFullView)
+                    Column(
+                      children: [
+                        const SizedBox(height: 20),
+                        ComponentPortion(onChiefComplaintsPressed: _handleChiefComplaintsPressed),
+                      ],
+                    ),
+                  SizedBox(height: 15,),
 
-
-                 // Medicine Dropdown Section
-                   Row(
+                  // Medicine Dropdown Section
+                  Row(
                     children: [
                       Image.asset(
                         'assets/images/medicine.png',
@@ -289,8 +266,6 @@ class _ExaminationPageState extends State<ExaminationPage> {
                     ],
                   ),
                   const MedicineDropdown(),
-    
-                  const SizedBox(height: 20),
 
 
                   // Investigation Dropdown
@@ -310,11 +285,10 @@ class _ExaminationPageState extends State<ExaminationPage> {
                       ),
                     ],
                   ),
-                  
                   const InvestigationDropdown(),
-                  const SizedBox(height: 20),
 
-                  //follow up
+
+                  // Follow-up
                   Container(
                     width: 325,
                     color: Colors.white,
@@ -336,11 +310,11 @@ class _ExaminationPageState extends State<ExaminationPage> {
                             children: [
                               Text(
                                 ' Date : ',
-                                  style: GoogleFonts.dmSerifText(color:Colors.black,fontSize:16)
+                                style: GoogleFonts.dmSerifText(color: Colors.black, fontSize: 16),
                               ),
-                              SizedBox(width:20),
+                              const SizedBox(width: 20),
                               SizedBox(
-                                width: 215.0,  // Set the desired width
+                                width: 215.0,
                                 child: ElevatedButton(
                                   onPressed: () => _selectDate(context),
                                   child: Text(
@@ -355,9 +329,9 @@ class _ExaminationPageState extends State<ExaminationPage> {
                           const SizedBox(height: 4.0),
                           Row(
                             children: [
-                               Text(
+                              Text(
                                 'Remark : ',
-                                   style: GoogleFonts.dmSerifText(color:Colors.black,fontSize:16)
+                                style: GoogleFonts.dmSerifText(color: Colors.black, fontSize: 16),
                               ),
                               const SizedBox(width: 10),
                               Expanded(
@@ -367,33 +341,35 @@ class _ExaminationPageState extends State<ExaminationPage> {
                                     controller: _remarkController,
                                     decoration: const InputDecoration(
                                       border: OutlineInputBorder(),
-                                      hintText: 'Enter Remark',
-                                      hintStyle: TextStyle(fontSize: 10),
                                     ),
                                   ),
                                 ),
                               ),
                             ],
                           ),
-                          const SizedBox(height: 10),
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: ElevatedButton(
-                              onPressed: _saveData,
-                              child: const Text('Done'),
-                            ),
+                          const SizedBox(height: 10.0),
+                          ElevatedButton(
+                            onPressed: _saveData,
+                            child: const Text('Save'),
                           ),
                         ],
                       ),
                     ),
                   ),
-                  SizedBox(height: 30),
-
-                  //Component portion below
-                  ComponentPortion(onChiefComplaintsPressed: _handleChiefComplaintsPressed),
-SizedBox(height: 30,),
-
-
+                  SizedBox(height: 10,),
+                  // Toggle View Button
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                        ),
+                        onPressed: _toggleView,
+                        child: Text(_isFullView ? 'Lite View' : 'Full View',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),

@@ -63,7 +63,7 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
 
       try {
         final response = await http.post(
-          Uri.parse('https://f71e-103-117-65-66.ngrok-free.app/frmOPDDoctorExamination/patientregister'),
+          Uri.parse('https://8719-103-117-65-66.ngrok-free.app/frmOPDDoctorExamination/patientregister'),
           headers: {'Content-Type': 'application/x-www-form-urlencoded'},
           body: formData,
         );
