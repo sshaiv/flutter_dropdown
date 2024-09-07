@@ -118,8 +118,6 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
     });
   }
 
-
-
   Future<void> _submitForm() async {
     if (_formKey.currentState?.validate() ?? false) {
       final String? formattedDob = _dob != null
@@ -378,7 +376,7 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
                     controller: _dobController,
                     decoration: InputDecoration(
                       labelText: 'DOB',
-                      suffixIcon: Icon(Icons.calendar_today),
+                      suffixIcon: Icon(Icons.calendar_today_rounded),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
