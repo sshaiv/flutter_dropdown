@@ -146,7 +146,7 @@ class _MedicineDropdownState extends State<MedicineDropdown> {
       'Start Date': startDateController.text,
       'Instruction': instructionController.text,
     };
-
+print(newEntry);
     try {
       // Send POST request to the server
       final response = await http.post(

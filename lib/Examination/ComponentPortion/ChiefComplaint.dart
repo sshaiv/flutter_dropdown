@@ -102,10 +102,10 @@ class _ChiefcomplaintState extends State<Chiefcomplaint> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.all(8.0),
+      margin: EdgeInsets.all(4.0),
       elevation: 4,
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(4.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -113,20 +113,20 @@ class _ChiefcomplaintState extends State<Chiefcomplaint> {
               children: [
                 Image.asset(
                   'assets/images/symptoms.png',
-                  width: 25,
-                  height: 25,
+                  width: 20,
+                  height: 20,
                 ),
                 const SizedBox(width: 8),
                 Text(
                   'Chief Complaints',
-                  style: GoogleFonts.daysOne(fontSize: 18),
+                  style: GoogleFonts.daysOne(fontSize: 15),
                 ),
               ],
             ),
             PopupMenuButton<String>(
               onSelected: _onSelect,
               child: ListTile(
-                title: Text(selectedValue ?? 'Select Chief Complaint'),
+                title: Text(selectedValue ?? 'Select Chief Complaint',style: TextStyle(fontSize: 10),),
                 trailing: Icon(Icons.arrow_drop_down),
               ),
               itemBuilder: (context) {
@@ -155,7 +155,7 @@ class _ChiefcomplaintState extends State<Chiefcomplaint> {
                                   setState(() {});
                                 },
                               ),
-                              SizedBox(height: 8),
+                              SizedBox(height: 4),
                               Flexible(
                                 child: NotificationListener<ScrollNotification>(
                                   onNotification: (ScrollNotification scrollInfo) {

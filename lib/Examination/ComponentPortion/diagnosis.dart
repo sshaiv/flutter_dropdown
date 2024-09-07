@@ -102,10 +102,10 @@ class _DiagnosisState extends State<Diagnosis> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.all(8.0),
+      margin: EdgeInsets.all(4.0),
       elevation: 4,
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(4.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -113,20 +113,20 @@ class _DiagnosisState extends State<Diagnosis> {
               children: [
                 Image.asset(
                   'assets/images/diagnosis.png',
-                  width: 25,
-                  height: 25,
+                  width: 20,
+                  height: 20,
                 ),
                 const SizedBox(width: 8),
                 Text(
                   'Diagnosis',
-                  style: GoogleFonts.daysOne(fontSize: 18),
+                  style: GoogleFonts.daysOne(fontSize: 15),
                 ),
               ],
             ),
             PopupMenuButton<String>(
               onSelected: _onSelect,
               child: ListTile(
-                title: Text(selectedValue ?? 'Select Diagnosis'),
+                title: Text(selectedValue ?? 'Select Diagnosis',style: TextStyle(fontSize: 10),),
                 trailing: Icon(Icons.arrow_drop_down),
               ),
               itemBuilder: (context) {

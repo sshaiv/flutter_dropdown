@@ -8,7 +8,6 @@ import 'package:medicine_doc/Examination/ComponentPortion/PastMedicalHistory.dar
 import 'package:medicine_doc/Examination/ComponentPortion/SurgicalHistory.dart';
 import 'package:medicine_doc/Examination/ComponentPortion/diagnosis.dart';
 import 'package:medicine_doc/Examination/Investigation.dart';
-import 'package:medicine_doc/Examination/component_portion.dart';
 import 'package:medicine_doc/Examination/medicine_dropdown.dart';
 import 'package:medicine_doc/Examination/vital_data.dart';
 
@@ -260,7 +259,7 @@ class _ExaminationPageState extends State<ExaminationPage> {
                         Surgicalhistory(),
                       ],
                     ),
-                  SizedBox(height: 15,),
+                  SizedBox(height: 20,),
 
                   // Medicine Dropdown Section
                   Row(
@@ -282,6 +281,7 @@ class _ExaminationPageState extends State<ExaminationPage> {
                   ),
                   const MedicineDropdown(),
 
+                  SizedBox(height:10 ,),
 
                   // Investigation Dropdown
                   Row(
@@ -302,7 +302,7 @@ class _ExaminationPageState extends State<ExaminationPage> {
                   ),
                   const InvestigationDropdown(),
 
-
+                  SizedBox(height:10 ,),
                   // Follow-up
                   Container(
                     width: 325,

@@ -27,9 +27,9 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
   String? _selectedGender;
   String? _selectedAgeUnit = 'Years';
   bool _showMoreDetails = false;
+  bool _isModification = false; // To distinguish between creation and modification
 
   @override
-
   void initState() {
     super.initState();
     _mobileController.addListener(_checkMobileNumber);
@@ -60,7 +60,7 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
 
   Future<void> _checkMobileNumber() async {
     final mobileNumber = _mobileController.text;
-    if(mobileNumber.length != 10){
+    if (mobileNumber.length != 10) {
       return;
     }
 
@@ -71,11 +71,14 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
           headers: {'Content-Type': 'application/x-www-form-urlencoded'},
         );
 
-        if(response.statusCode != 200){
+        if (response.statusCode != 200) {
           return;
         }
         final Map<String, dynamic> data = json.decode(response.body);
-        handelDataSet(data);
+        _handleDataSet(data);
+        setState(() {
+          _isModification = true; // Set to true if patient exists
+        });
       } catch (error) {
         print('Error fetching data: $error');
       }
@@ -93,11 +96,12 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
         _stateController.clear();
         _countryController.clear();
         _dob = null;
+        _isModification = false; // Set to false if no mobile number
       });
     }
   }
 
-  void handelDataSet(Map<String, dynamic> data) {
+  void _handleDataSet(Map<String, dynamic> data) {
     setState(() {
       _firstNameController.text = data['firstname'] ?? _firstNameController.text;
       _lastNameController.text = data['lastname'] ?? _lastNameController.text;
@@ -110,14 +114,16 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
       _cityController.text = data['cityid'] ?? _cityController.text;
       _stateController.text = data['stateid'] ?? _stateController.text;
       _countryController.text = data['countryid'] ?? _countryController.text;
-      _dob = DateTime.tryParse(data['dob'] ?? _dob);
+      _dob = DateTime.tryParse(data['dob'] ?? _dob?.toIso8601String() ?? '');
     });
   }
+
+
 
   Future<void> _submitForm() async {
     if (_formKey.currentState?.validate() ?? false) {
       final String? formattedDob = _dob != null
-          ? "${_dob!.day.toString().padLeft(2, '0')}-${_dob!.month.toString().padLeft(2, '0')}-${_dob!.year}"
+          ? "${_dob!.year}-${_dob!.month.toString().padLeft(2, '0')}-${_dob!.day.toString().padLeft(2, '0')}"
           : null;
 
       final Map<String, String> formData = {
@@ -132,21 +138,31 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
         'cityid': _cityController.text,
         'stateid': _stateController.text,
         'countryid': _countryController.text,
-        'address':_addressController.text,
+        'address': _addressController.text,
+        'dob': formattedDob ?? '', // Add date of birth to the form data
       };
 
       try {
-        final response = await http.post(
-          Uri.parse('${baseUrl}/frmOPDDoctorExamination/patientregister'),
+        final Uri uri = Uri.parse('${baseUrl}/frmOPDDoctorExamination/patientregister');
+        final response = _isModification
+            ? await http.put(
+          uri,
+          headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+          body: formData,
+        )
+            : await http.post(
+          uri,
           headers: {'Content-Type': 'application/x-www-form-urlencoded'},
           body: formData,
         );
-        if(response.statusCode != 200){
-          print('API do not return any data ');
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('An error occurred while registering the patient.')));
+
+        if (response.statusCode != 200) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('An error occurred while ${_isModification ? 'updating' : 'registering'} the patient.')));
+          return;
         }
+
         final result = response.body;
-        if(result == 'patient already exists'){
+        if (result == 'patient already exists') {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result)));
           return;
         }
@@ -168,6 +184,7 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
           _selectedTitle = null;
           _selectedGender = null;
           _showMoreDetails = false;
+          _isModification = false; // Reset for next use
         });
 
         Navigator.push(
@@ -182,16 +199,18 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
         );
       } catch (error) {
         print('Error: $error');
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('An error occurred while registering the patient.')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('An error occurred while ${_isModification ? 'updating' : 'registering'} the patient.')));
       }
     }
   }
+
 
   void _selectDate() async {
     DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: _dob ?? DateTime.now(),
       firstDate: DateTime(1900),
+
       lastDate: DateTime.now(),
     );
 
@@ -204,7 +223,6 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
       });
     }
   }
-
 
 
   void _calculateDobFromAge(String age, String? ageUnit) {
@@ -231,7 +249,6 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
       });
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -432,22 +449,11 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
                     ),
                     onPressed: _submitForm,
                     child: Text(
-                      'Create',
+                      _isModification ? 'Update' : 'Create',
                       style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                     ),
                   ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                    ),
-                    onPressed: () {
-                      // Handle modify action
-                    },
-                    child: Text(
-                      'Modify',
-                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                    ),
-                  ),
+
                   Center(
                     child: TextButton(
                       onPressed: () {
@@ -474,3 +480,5 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
     );
   }
 }
+
+
