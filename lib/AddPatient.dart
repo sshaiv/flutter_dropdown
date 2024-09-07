@@ -1,4 +1,4 @@
-import 'dart:ui';
+import 'dart:convert'; // Import for JSON decoding
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'Examination/Examination.dart';
@@ -20,6 +20,7 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
   final TextEditingController _stateController = TextEditingController();
   final TextEditingController _countryController = TextEditingController();
   final TextEditingController _dobController = TextEditingController();
+  static const String baseUrl = 'https://fb35-103-117-65-66.ngrok-free.app';
 
   DateTime? _dob;
   String? _selectedTitle;
@@ -29,89 +30,159 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
   @override
   void initState() {
     super.initState();
-
+    _mobileController.addListener(_checkMobileNumber);
     _ageController.addListener(() {
       _calculateDobFromAge(_ageController.text);
     });
   }
+
+  @override
+  void dispose() {
+    _mobileController.removeListener(_checkMobileNumber);
+    _mobileController.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    _ageController.dispose();
+    _aadharController.dispose();
+    _addressController.dispose();
+    _cityController.dispose();
+    _stateController.dispose();
+    _countryController.dispose();
+    _dobController.dispose();
+    super.dispose();
+  }
+
   final List<String> _titles = ['Mr', 'Mrs', 'Ms'];
   final List<String> _genders = ['Male', 'Female', 'Other'];
 
+  Future<void> _checkMobileNumber() async {
+    final mobileNumber = _mobileController.text;
+    if(mobileNumber.length != 10){
+      return;
+    }
 
+    if (mobileNumber.isNotEmpty) {
+      try {
+        final response = await http.get(
+          Uri.parse('${baseUrl}/frmOPDDoctorExamination/patientregister?mobileno=$mobileNumber'),
+          headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        );
+
+        if(response.statusCode != 200){
+          return;
+        }
+        final Map<String, dynamic> data = json.decode(response.body);
+        handelDataSet(data);
+      } catch (error) {
+        print('Error fetching data: $error');
+      }
+    } else {
+      setState(() {
+        _firstNameController.clear();
+        _lastNameController.clear();
+        _selectedTitle = null;
+        _ageController.clear();
+        _dobController.clear();
+        _selectedGender = null;
+        _aadharController.clear();
+        _addressController.clear();
+        _cityController.clear();
+        _stateController.clear();
+        _countryController.clear();
+        _dob = null;
+      });
+    }
+  }
+
+  void handelDataSet(Map<String, dynamic> data) {
+    setState(() {
+      _firstNameController.text = data['firstname'] ?? _firstNameController.text;
+      _lastNameController.text = data['lastname'] ?? _lastNameController.text;
+      _selectedTitle = data['initialid'] ?? _selectedTitle;
+      _ageController.text = data['age'] ?? _ageController.text;
+      _dobController.text = data['dob'] ?? _dobController.text;
+      _selectedGender = data['genderid'] ?? _selectedGender;
+      _aadharController.text = data['aadharno'] ?? _aadharController.text;
+      _addressController.text = data['address'] ?? _addressController.text;
+      _cityController.text = data['cityid'] ?? _cityController.text;
+      _stateController.text = data['stateid'] ?? _stateController.text;
+      _countryController.text = data['countryid'] ?? _countryController.text;
+      _dob = DateTime.tryParse(data['dob'] ?? _dob);
+    });
+  }
 
   Future<void> _submitForm() async {
     if (_formKey.currentState?.validate() ?? false) {
-      // Format the date as dd-MM-yyyy
       final String? formattedDob = _dob != null
           ? "${_dob!.day.toString().padLeft(2, '0')}-${_dob!.month.toString().padLeft(2, '0')}-${_dob!.year}"
           : null;
 
       final Map<String, String> formData = {
         'mobileno': _mobileController.text,
+        'alternateMobileNo': '',
+        'initialid': _selectedTitle ?? '',
         'firstname': _firstNameController.text,
         'lastname': _lastNameController.text,
-        'initialid': _selectedTitle ?? '',
         'age': _ageController.text,
-        'dob': formattedDob ?? '',
         'genderid': _selectedGender ?? '',
         'aadharno': _aadharController.text,
-        'address': _addressController.text,
         'cityid': _cityController.text,
         'stateid': _stateController.text,
         'countryid': _countryController.text,
+        'address':_addressController.text,
       };
 
       try {
         final response = await http.post(
-          Uri.parse('https://8719-103-117-65-66.ngrok-free.app/frmOPDDoctorExamination/patientregister'),
+          Uri.parse('${baseUrl}/frmOPDDoctorExamination/patientregister'),
           headers: {'Content-Type': 'application/x-www-form-urlencoded'},
           body: formData,
         );
-
-        final result = response.body;
-        if (result == 'patient registered successfully') {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result)));
-
-          // Clear form fields and reset state
-          _formKey.currentState?.reset();
-          _mobileController.clear();
-          _firstNameController.clear();
-          _lastNameController.clear();
-          _ageController.clear();
-          _aadharController.clear();
-          _addressController.clear();
-          _cityController.clear();
-          _stateController.clear();
-          _countryController.clear();
-          _dobController.clear();
-          setState(() {
-            _dob = null;
-            _selectedTitle = null;
-            _selectedGender = null;
-            _showMoreDetails = false;
-          });
-
-          // Navigate to ExaminationPage upon successful registration
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ExaminationPage(
-                name: '${_firstNameController.text} ${_lastNameController.text}',
-                age: int.tryParse(_ageController.text) ?? 0,
-                gender: _selectedGender ?? '',
-              ),
-            ),
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result)));
+        if(response.statusCode != 200){
+          print('API do not return any data ');
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('An error occurred while registering the patient.')));
         }
+        final result = response.body;
+        if(result == 'patient already exists'){
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result)));
+          return;
+        }
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result)));
+
+        _formKey.currentState?.reset();
+        _mobileController.clear();
+        _firstNameController.clear();
+        _lastNameController.clear();
+        _ageController.clear();
+        _aadharController.clear();
+        _addressController.clear();
+        _cityController.clear();
+        _stateController.clear();
+        _countryController.clear();
+        _dobController.clear();
+        setState(() {
+          _dob = null;
+          _selectedTitle = null;
+          _selectedGender = null;
+          _showMoreDetails = false;
+        });
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ExaminationPage(
+              name: '${_firstNameController.text} ${_lastNameController.text}',
+              age: int.tryParse(_ageController.text) ?? 0,
+              gender: _selectedGender ?? '',
+            ),
+          ),
+        );
       } catch (error) {
         print('Error: $error');
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('An error occurred while registering the patient.')));
       }
     }
   }
-
 
   void _selectDate() async {
     DateTime? pickedDate = await showDatePicker(
@@ -126,7 +197,6 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
         _dob = pickedDate;
         _dobController.text = "${_dob!.day.toString().padLeft(2, '0')}-${_dob!.month.toString().padLeft(2, '0')}-${_dob!.year}";
 
-        // Update the age field automatically
         _ageController.text = ((DateTime.now().difference(pickedDate).inDays) ~/ 365).toString();
       });
     }
@@ -144,12 +214,10 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar
-        (
+      appBar: AppBar(
         leading: BackButton(color: Colors.white),
         centerTitle: true,
         title: const Row(
@@ -176,24 +244,22 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
           key: _formKey,
           child: ListView(
             children: [
-
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.red.withOpacity(0.3), // Similar red background with opacity
-                  borderRadius: BorderRadius.circular(10), // Rounded corners
+                  color: Colors.red.withOpacity(0.3),
+                  borderRadius: BorderRadius.circular(10),
                 ),
-                padding: const EdgeInsets.all(8.0), // Padding inside the container
+                padding: const EdgeInsets.all(8.0),
                 child: Row(
                   children: [
-                    const Icon(Icons.search, color: Colors.white), // Icon for mobile number
+                    const Icon(Icons.search, color: Colors.white),
                     const SizedBox(width: 8),
                     Expanded(
                       child: TextFormField(
                         controller: _mobileController,
                         decoration: const InputDecoration(
                           labelText: 'Mobile Number',
-                          // hintText: 'Please Enter a Valid Contact Number',
-                          border: InputBorder.none, // No border for the TextFormField
+                          border: InputBorder.none,
                         ),
                         keyboardType: TextInputType.phone,
                         validator: (value) {
@@ -207,7 +273,6 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
                   ],
                 ),
               ),
-
               DropdownButtonFormField<String>(
                 value: _selectedTitle,
                 items: _titles.map((title) {
@@ -243,7 +308,6 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
                   return null;
                 },
               ),
-
               TextFormField(
                 controller: _ageController,
                 decoration: InputDecoration(labelText: 'Age'),
@@ -259,7 +323,7 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
                 onTap: _selectDate,
                 child: AbsorbPointer(
                   child: TextFormField(
-                    controller: _dobController,  // Set the controller here
+                    controller: _dobController,
                     decoration: InputDecoration(
                       labelText: 'DOB',
                       suffixIcon: Icon(Icons.calendar_today),
@@ -273,8 +337,6 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
                   ),
                 ),
               ),
-
-
               DropdownButtonFormField<String>(
                 value: _selectedGender,
                 items: _genders.map((gender) {
@@ -296,8 +358,6 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
                   return null;
                 },
               ),
-
-
               if (_showMoreDetails) ...[
                 TextFormField(
                   controller: _aadharController,
@@ -333,11 +393,13 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
                 children: [
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red
+                      backgroundColor: Colors.red,
                     ),
                     onPressed: _submitForm,
-                    child: Text('Create',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),
-
+                    child: Text(
+                      'Create',
+                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                    ),
                   ),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
@@ -346,7 +408,10 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
                     onPressed: () {
                       // Handle modify action
                     },
-                    child: Text('Modify',style: TextStyle(color:Colors.white,fontWeight: FontWeight.bold),),
+                    child: Text(
+                      'Modify',
+                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                    ),
                   ),
                   Center(
                     child: TextButton(
@@ -355,9 +420,9 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
                           context,
                           MaterialPageRoute(
                             builder: (context) => ExaminationPage(
-                              name: 'xyz', // Assuming 'name' is a String
-                              age: 0,      // Assuming 'age' is an int
-                              gender: 'Male', // Assuming 'gender' is a String
+                              name: 'xyz',
+                              age: 0,
+                              gender: 'Male',
                             ),
                           ),
                         );
@@ -367,16 +432,10 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
                   ),
                 ],
               ),
-              // Table for displaying patient data can be implemented if needed
             ],
           ),
         ),
       ),
-
-
     );
   }
 }
-
-
-

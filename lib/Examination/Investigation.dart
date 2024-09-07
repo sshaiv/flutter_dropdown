@@ -183,7 +183,6 @@ class _InvestigationDropdownState extends State<InvestigationDropdown> {
 
 
   @override
-  @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

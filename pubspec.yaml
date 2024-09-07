@@ -41,6 +41,8 @@ dependencies:
   google_fonts: ^6.2.1
   dropdown_button2: ^2.3.9
   intl: ^0.18.0
+  flutter_typeahead: ^4.0.0
+
 
   
 dev_dependencies:

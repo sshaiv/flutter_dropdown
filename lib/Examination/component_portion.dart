@@ -1,475 +1,123 @@
-import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-
-
-class ComponentPortion extends StatelessWidget {
-  final Function onChiefComplaintsPressed;
-
-  ComponentPortion({required this.onChiefComplaintsPressed});
-
-  final TextEditingController _ChiefController = TextEditingController();
-  final TextEditingController _AllergyController = TextEditingController();
-  final TextEditingController _DiagnosisController = TextEditingController();
-  final TextEditingController _ExaminationController = TextEditingController();
-  final TextEditingController _FamilyHistoryController = TextEditingController();
-  final TextEditingController _PastController = TextEditingController();
-  final TextEditingController _SurgicalController = TextEditingController();
-
-
-
-  // Method to show the Chief Complaints popup
-  void _showChiefPopup(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Enter'),
-          content: TextField(
-            controller: _ChiefController,
-            decoration: const InputDecoration(
-              labelText: 'Enter here...',
-              suffixIcon: Icon(Icons.check), // Icon for the click action
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                // Save the data to the console
-                print('Chief save are: ${_ChiefController.text}');
-
-
-                // Clear the text field
-                _ChiefController.clear();
-
-                // Close the dialog
-                Navigator.of(context).pop();
-              },
-              child: const Text('Next'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  //Allergy Popup
-  void _showAllergyPopup(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Enter'),
-          content: TextField(
-            controller: _AllergyController,
-            decoration: const InputDecoration(
-              labelText: 'Enter here...',
-              suffixIcon: Icon(Icons.check), // Icon for the click action
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                // Save the data to the console
-                print('Allergy save are: ${_AllergyController.text}');
-
-                // Clear the text field
-                _AllergyController.clear();
-
-                // Close the dialog
-                Navigator.of(context).pop();
-              },
-              child: const Text('Next'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  //Diagnosis Popup
-  void _showDiagnosisPopup(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Enter'),
-          content: TextField(
-            controller: _DiagnosisController,
-            decoration: const InputDecoration(
-              labelText: 'Enter here...',
-              suffixIcon: Icon(Icons.check), // Icon for the click action
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                // Save the data to the console
-                print('Diagnosis save are: ${_DiagnosisController.text}');
-
-                // Clear the text field
-                _DiagnosisController.clear();
-
-                // Close the dialog
-                Navigator.of(context).pop();
-              },
-              child: const Text('Next'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  //Show Examination Findings
-  void _showExaminationPopup(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Enter'),
-          content: TextField(
-            controller: _ExaminationController,
-            decoration: const InputDecoration(
-              labelText: 'Enter here...',
-              suffixIcon: Icon(Icons.check), // Icon for the click action
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                // Save the data to the console
-                print('Examination save are: ${_ExaminationController.text}');
-
-                // Clear the text field
-                _ExaminationController.clear();
-
-                // Close the dialog
-                Navigator.of(context).pop();
-              },
-              child: const Text('Next'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  //Family History
-  void _showFamilyHistoryPopup(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Enter'),
-          content: TextField(
-            controller: _FamilyHistoryController,
-            decoration: const InputDecoration(
-              labelText: 'Enter here...',
-              suffixIcon: Icon(Icons.check), // Icon for the click action
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                // Save the data to the console
-                print('Family History save are: ${_FamilyHistoryController.text}');
-
-                // Clear the text field
-                _FamilyHistoryController.clear();
-
-                // Close the dialog
-                Navigator.of(context).pop();
-              },
-              child: const Text('Next'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  //Past
-  void _showPastPopup(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Enter'),
-          content: TextField(
-            controller: _PastController,
-            decoration: const InputDecoration(
-              labelText: 'Enter here...',
-              suffixIcon: Icon(Icons.check), // Icon for the click action
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                // Save the data to the console
-                print('Past save are: ${_PastController.text}');
-
-                // Clear the text field
-                _PastController.clear();
-
-                // Close the dialog
-                Navigator.of(context).pop();
-              },
-              child: const Text('Next'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-
-  //Surgical
-  void _showSurgicalPopup(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Enter'),
-          content: TextField(
-            controller: _SurgicalController,
-            decoration: const InputDecoration(
-              labelText: 'Enter here...',
-              suffixIcon: Icon(Icons.check), // Icon for the click action
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                // Save the data to the console
-                print('Surgical save are: ${_SurgicalController.text}');
-
-                // Clear the text field
-                _SurgicalController.clear();
-
-                // Close the dialog
-                Navigator.of(context).pop();
-              },
-              child: const Text('Next'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Column(
-          children: <Widget>[
-            Row(
-              children: <Widget>[
-                GestureDetector(
-                  onTap: () => _showChiefPopup(context), // Call the popup method
-                  child: Container(
-                    width: 100,
-                    height: 75,
-                    color: Colors.white,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const SizedBox(height: 10),
-                        Image.asset(
-                          'assets/images/symptoms.png',
-                          width: 25.0,
-                          height: 25.0,
-                          fit: BoxFit.cover,
-                        ),
-                        const SizedBox(height: 8.0),
-                         Text(
-                          'Chief Complaints',
-                            style:GoogleFonts.handjet(color:Colors.black,fontSize:12)
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 10),
-
-                //allergys
-                GestureDetector(
-                  onTap: () => _showAllergyPopup(context), // Call the popup method
-                  child: Container(
-                    width: 100,
-                    height: 75,
-                    color: Colors.white,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const SizedBox(height: 10),
-                        Image.asset(
-                          'assets/images/allergys.png',
-                          width: 25.0,
-                          height: 25.0,
-                          fit: BoxFit.cover,
-                        ),
-                        const SizedBox(height: 8.0),
-                        Text(
-                          'Allergy History',
-                            style:GoogleFonts.handjet(color:Colors.black,fontSize:12)
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 10),
-
-
-                GestureDetector(
-                  onTap: () => _showDiagnosisPopup(context), // Call the popup method
-                  child: Container(
-                    width: 100,
-                    height: 75,
-                    color: Colors.white,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const SizedBox(height: 10),
-                        Image.asset(
-                          'assets/images/diagnosis.png',
-                          width: 25.0,
-                          height: 25.0,
-                          fit: BoxFit.cover,
-                        ),
-                        const SizedBox(height: 8.0),
-                         Text(
-                          'Diagnosis',
-                             style:GoogleFonts.handjet(color:Colors.black,fontSize:12)
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 25),
-            Row(
-              children: <Widget>[
-                GestureDetector(
-                  onTap: () => _showExaminationPopup(context), // Call the popup method
-                  child: Container(
-                    width: 105,
-                    height: 75,
-                    color: Colors.white,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const SizedBox(height: 10),
-                        Image.asset(
-                          'assets/images/search.png',
-                          width: 25.0,
-                          height: 25.0,
-                          fit: BoxFit.cover,
-                        ),
-                        const SizedBox(height: 8.0),
-                         Text(
-                          'Examination Findings',
-                             style:GoogleFonts.handjet(color:Colors.black,fontSize:12)
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                GestureDetector(
-                  onTap: () => _showFamilyHistoryPopup(context), // Call the popup method
-                  child: Container(
-                    width: 100,
-                    height: 75,
-                    color: Colors.white,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const SizedBox(height: 10),
-                        Image.asset(
-                          'assets/images/family.png',
-                          width: 25.0,
-                          height: 25.0,
-                          fit: BoxFit.cover,
-                        ),
-                        const SizedBox(height: 8.0),
-                        Text(
-                          'Family History',
-                            style:GoogleFonts.handjet(color:Colors.black,fontSize:12)
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                GestureDetector(
-                  onTap: () => _showPastPopup(context), // Call the popup method
-                  child: Container(
-                    width: 100,
-                    height: 75,
-                    color: Colors.white,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const SizedBox(height: 10),
-                        Image.asset(
-                          'assets/images/past.png',
-                          width: 25.0,
-                          height: 25.0,
-                          fit: BoxFit.cover,
-                        ),
-                        const SizedBox(height: 8.0),
-                         Text(
-                          'PastMedicalHistory',
-                             style:GoogleFonts.handjet(color:Colors.black,fontSize:12)
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 25),
-
-            Row(
-              children: <Widget>[
-                GestureDetector(
-                  onTap: () => _showSurgicalPopup(context), // Call the popup method
-                  child: Container(
-                    width: 100,
-                    height: 75,
-                    color: Colors.white,
-                    child: Column(
-                      // mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const SizedBox(height: 10),
-                        Image.asset(
-                          'assets/images/surgical.png',
-                          width: 25.0,
-                          height: 25.0,
-                          fit: BoxFit.cover,
-                        ),
-                        const SizedBox(height: 8.0),
-                         Text(
-                          'Surgical History',
-                             style:GoogleFonts.handjet(color:Colors.black,fontSize:12)
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-SizedBox(width: 10,),
-
-              ]
-            ),
-          ]
-        ),
-      ),
-    );
-  }
-}
+// import 'package:flutter/material.dart';
+// import 'package:google_fonts/google_fonts.dart';
+// import 'package:flutter_typeahead/flutter_typeahead.dart';
+//
+// class ComponentPortion extends StatelessWidget {
+//   final Function onChiefComplaintsPressed;
+//
+//   ComponentPortion({required this.onChiefComplaintsPressed});
+//
+//   // Placeholder methods for API calls
+//   Future<List<String>> fetchDataForDropdown(String endpoint) async {
+//     // TODO: Implement API call
+//     return Future.delayed(Duration(seconds: 2), () => ['Option 1', 'Option 2', 'Option 3']);
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Center(
+//       child: SingleChildScrollView(
+//         scrollDirection: Axis.horizontal,
+//         child: Column(
+//           children: <Widget>[
+//             // Card List
+//             for (var item in [
+//               {'title': 'Chief Complaints', 'iconPath': 'assets/images/symptoms.png', 'endpoint': 'chief_complaints'},
+//               {'title': 'Allergy History', 'iconPath': 'assets/images/allergys.png', 'endpoint': 'allergy_history'},
+//               {'title': 'Diagnosis', 'iconPath': 'assets/images/diagnosis.png', 'endpoint': 'diagnosis'},
+//               {'title': 'Examination Findings', 'iconPath': 'assets/images/search.png', 'endpoint': 'examination_findings'},
+//               {'title': 'Family History', 'iconPath': 'assets/images/family.png', 'endpoint': 'family_history'},
+//               {'title': 'Past Medical History', 'iconPath': 'assets/images/past.png', 'endpoint': 'past_medical_history'},
+//               {'title': 'Surgical History', 'iconPath': 'assets/images/surgical.png', 'endpoint': 'surgical_history'}
+//             ])
+//               _buildCard(
+//                 title: item['title']!,
+//                 iconPath: item['iconPath']!,
+//                 dropdownItems: fetchDataForDropdown(item['endpoint']!),
+//               ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+//
+//   Widget _buildCard({
+//     required String title,
+//     required String iconPath,
+//     required Future<List<String>> dropdownItems,
+//   }) {
+//     return Builder(
+//       builder: (context) {
+//         // final screenWidth = MediaQuery.of(context).size.width;
+//         return Card(
+//           child: Container(
+//             width: 350,
+//             padding: EdgeInsets.all(8.0),
+//             color: Colors.white,
+//             child: Column(
+//               mainAxisAlignment: MainAxisAlignment.center,
+//               children: [
+//                 Row(
+//                   crossAxisAlignment: CrossAxisAlignment.center,
+//                   children: [
+//                     Image.asset(
+//                       iconPath,
+//                       width: 25.0,
+//                       height: 25.0,
+//                       fit: BoxFit.cover,
+//                     ),
+//                     SizedBox(width: 8.0),
+//                     Expanded(
+//                       child: Text(
+//                         title,
+//                         style: GoogleFonts.handjet(color: Colors.black, fontSize: 12),
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//                 SizedBox(height: 10.0),
+//                 FutureBuilder<List<String>>(
+//                   future: dropdownItems,
+//                   builder: (context, snapshot) {
+//                     if (snapshot.connectionState == ConnectionState.waiting) {
+//                       return CircularProgressIndicator();
+//                     } else if (snapshot.hasError) {
+//                       return Text('Error: ${snapshot.error}');
+//                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+//                       return Text('No data available');
+//                     } else {
+//                       return TypeAheadField<String>(
+//                         textFieldConfiguration: TextFieldConfiguration(
+//                           decoration: InputDecoration(
+//                             labelText: 'Select $title',
+//                             border: OutlineInputBorder(),
+//                           ),
+//                         ),
+//                         suggestionsCallback: (pattern) async {
+//                           return snapshot.data!.where((item) => item.toLowerCase().contains(pattern.toLowerCase()));
+//                         },
+//                         itemBuilder: (context, suggestion) {
+//                           return ListTile(
+//                             title: Text(suggestion),
+//                           );
+//                         },
+//                         onSuggestionSelected: (suggestion) {
+//                           // Handle the selected suggestion
+//                           print('Selected: $suggestion');
+//                         },
+//                       );
+//                     }
+//                   },
+//                 ),
+//               ],
+//             ),
+//           ),
+//         );
+//       },
+//     );
+//   }
+// }
+//
 
 
 

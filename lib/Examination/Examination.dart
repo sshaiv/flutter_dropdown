@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:medicine_doc/Examination/ComponentPortion/Allergy.dart';
+import 'package:medicine_doc/Examination/ComponentPortion/ChiefComplaint.dart';
+import 'package:medicine_doc/Examination/ComponentPortion/ExaminationFindings.dart';
+import 'package:medicine_doc/Examination/ComponentPortion/FamilyHistory.dart';
+import 'package:medicine_doc/Examination/ComponentPortion/PastMedicalHistory.dart';
+import 'package:medicine_doc/Examination/ComponentPortion/SurgicalHistory.dart';
+import 'package:medicine_doc/Examination/ComponentPortion/diagnosis.dart';
 import 'package:medicine_doc/Examination/Investigation.dart';
 import 'package:medicine_doc/Examination/component_portion.dart';
 import 'package:medicine_doc/Examination/medicine_dropdown.dart';
@@ -242,7 +249,15 @@ class _ExaminationPageState extends State<ExaminationPage> {
                     Column(
                       children: [
                         const SizedBox(height: 20),
-                        ComponentPortion(onChiefComplaintsPressed: _handleChiefComplaintsPressed),
+                        // ComponentPortion(onChiefComplaintsPressed: _handleChiefComplaintsPressed),
+                        // ComponentPortion(),
+                        Chiefcomplaint(),
+                        Allergy(),
+                        Diagnosis(),
+                        Examinationfindings(),
+                        Familyhistory(),
+                        Pastmedicalhistory(),
+                        Surgicalhistory(),
                       ],
                     ),
                   SizedBox(height: 15,),
