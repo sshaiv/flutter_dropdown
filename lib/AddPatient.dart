@@ -1,4 +1,4 @@
-import 'dart:convert'; // Import for JSON decoding
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'Examination/Examination.dart';
@@ -25,14 +25,16 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
   DateTime? _dob;
   String? _selectedTitle;
   String? _selectedGender;
+  String? _selectedAgeUnit = 'Years';
   bool _showMoreDetails = false;
 
   @override
+
   void initState() {
     super.initState();
     _mobileController.addListener(_checkMobileNumber);
     _ageController.addListener(() {
-      _calculateDobFromAge(_ageController.text);
+      _calculateDobFromAge(_ageController.text, _selectedAgeUnit);
     });
   }
 
@@ -54,6 +56,7 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
 
   final List<String> _titles = ['Mr', 'Mrs', 'Ms'];
   final List<String> _genders = ['Male', 'Female', 'Other'];
+  final List<String> _ageUnits = ['Years', 'Months', 'Days']; // Age units
 
   Future<void> _checkMobileNumber() async {
     final mobileNumber = _mobileController.text;
@@ -202,17 +205,33 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
     }
   }
 
-  void _calculateDobFromAge(String age) {
+
+
+  void _calculateDobFromAge(String age, String? ageUnit) {
     if (age.isNotEmpty) {
       final int ageInt = int.tryParse(age) ?? 0;
       final now = DateTime.now();
-      final calculatedDob = DateTime(now.year - ageInt, now.month, now.day);
+      DateTime calculatedDob;
+
+      switch (ageUnit) {
+        case 'Months':
+          calculatedDob = DateTime(now.year, now.month - ageInt, now.day);
+          break;
+        case 'Days':
+          calculatedDob = now.subtract(Duration(days: ageInt));
+          break;
+        default:
+          calculatedDob = DateTime(now.year - ageInt, now.month, now.day);
+          break;
+      }
+
       setState(() {
         _dob = calculatedDob;
         _dobController.text = "${_dob!.day.toString().padLeft(2, '0')}-${_dob!.month.toString().padLeft(2, '0')}-${_dob!.year}";
       });
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -318,6 +337,22 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
                   }
                   return null;
                 },
+              ),
+              DropdownButtonFormField<String>(
+                value: _selectedAgeUnit,
+                items: _ageUnits.map((unit) {
+                  return DropdownMenuItem(
+                    value: unit,
+                    child: Text(unit),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    _selectedAgeUnit = value;
+                    _calculateDobFromAge(_ageController.text, value);
+                  });
+                },
+                decoration: InputDecoration(labelText: 'Age Unit'),
               ),
               GestureDetector(
                 onTap: _selectDate,
