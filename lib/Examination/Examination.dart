@@ -1,16 +1,41 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:medicine_doc/Examination/ComponentPortion/Allergy.dart';
-import 'package:medicine_doc/Examination/ComponentPortion/ChiefComplaint.dart';
-import 'package:medicine_doc/Examination/ComponentPortion/ExaminationFindings.dart';
-import 'package:medicine_doc/Examination/ComponentPortion/FamilyHistory.dart';
-import 'package:medicine_doc/Examination/ComponentPortion/PastMedicalHistory.dart';
-import 'package:medicine_doc/Examination/ComponentPortion/SurgicalHistory.dart';
-import 'package:medicine_doc/Examination/ComponentPortion/diagnosis.dart';
-import 'package:medicine_doc/Examination/Investigation.dart';
-import 'package:medicine_doc/Examination/medicine_dropdown.dart';
+import 'package:http/http.dart' as http;
 import 'package:medicine_doc/Examination/vital_data.dart';
 
+import 'ComponentPortion/Allergy.dart';
+import 'ComponentPortion/ChiefComplaint.dart';
+import 'ComponentPortion/ExaminationFindings.dart';
+import 'ComponentPortion/FamilyHistory.dart';
+import 'ComponentPortion/PastMedicalHistory.dart';
+import 'ComponentPortion/SurgicalHistory.dart';
+import 'ComponentPortion/diagnosis.dart';
+import 'Investigation.dart';
+import 'medicine_dropdown.dart';
+
+// Define the PatientDetails data model
+class PatientDetails {
+  final String name;
+  final int age;
+  final String gender;
+
+  PatientDetails({
+    required this.name,
+    required this.age,
+    required this.gender,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'age': age,
+      'gender': gender,
+    };
+  }
+}
+
+// Examination Page Stateful Widget
 class ExaminationPage extends StatefulWidget {
   final String name;
   final int age;
@@ -27,14 +52,10 @@ class ExaminationPage extends StatefulWidget {
 }
 
 class _ExaminationPageState extends State<ExaminationPage> {
-  // Controller to manage the text input
   final TextEditingController _controller = TextEditingController();
-
-  // Follow up
-  DateTime? _selectedDate;
   final TextEditingController _remarkController = TextEditingController();
-
-  bool _isFullView = false; // Lite view is default, so start with false
+  DateTime? _selectedDate;
+  bool _isFullView = false;
 
   @override
   void dispose() {
@@ -43,7 +64,7 @@ class _ExaminationPageState extends State<ExaminationPage> {
     super.dispose();
   }
 
-  // Function to open date picker
+  // Method to open date picker
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
@@ -57,39 +78,57 @@ class _ExaminationPageState extends State<ExaminationPage> {
       });
   }
 
-  // Save follow-up data
+  // Method to save follow-up data
   void _saveData() {
     final String date = _selectedDate != null ? _selectedDate.toString() : 'No date selected';
     final String remark = _remarkController.text.isNotEmpty ? _remarkController.text : 'No remark entered';
 
-    // Print data to console
     print('Date: $date');
     print('Remark: $remark');
 
-    // Clear fields
     setState(() {
       _selectedDate = null;
       _remarkController.clear();
     });
   }
 
-  // Define the _checkupData method
+  // Method to save checkup data
   void _checkupData() {
     final String checkupData = _controller.text.isNotEmpty ? _controller.text : 'No data entered';
 
-    // Print the checkup data to the console
     print('Doctor Note: $checkupData');
 
-    // Clear the input field after saving
     setState(() {
       _controller.clear();
     });
   }
 
-  void _handleChiefComplaintsPressed() {
-    print('Chief Complaints pressed');
+  // Method to push patient details
+  Future<void> _pushPatientDetails() async {
+    final patientDetails = PatientDetails(
+      name: widget.name,
+      age: widget.age,
+      gender: widget.gender,
+    );
+
+    try {
+      final response = await http.post(
+        Uri.parse('https://your-backend-url.com/patient-details'), // Replace with your backend URL
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(patientDetails.toJson()),
+      );
+
+      if (response.statusCode == 200) {
+        print('Patient details saved successfully');
+      } else {
+        print('Failed to save patient details');
+      }
+    } catch (error) {
+      print('Error: $error');
+    }
   }
 
+  // Method to toggle between full view and lite view
   void _toggleView() {
     setState(() {
       _isFullView = !_isFullView;
@@ -182,12 +221,14 @@ class _ExaminationPageState extends State<ExaminationPage> {
                             ),
                           ],
                         ),
+                        const SizedBox(height: 10),
+
                       ],
                     ),
                   ),
                   const SizedBox(height: 16),
 
-                  // Vital Data
+                  // Vital Data (Replace with your actual implementation)
                   VitalData(controllers: List.generate(10, (index) => TextEditingController())),
                   const SizedBox(height: 10),
 
@@ -215,7 +256,6 @@ class _ExaminationPageState extends State<ExaminationPage> {
                             ],
                           ),
                           const SizedBox(height: 10),
-                          // Row containing TextField and Save button
                           Row(
                             children: [
                               Expanded(
@@ -231,7 +271,6 @@ class _ExaminationPageState extends State<ExaminationPage> {
                                 ),
                               ),
                               const SizedBox(width: 8),
-                              // Save button
                               ElevatedButton(
                                 onPressed: _checkupData,
                                 child: const Text('Next'),
@@ -243,13 +282,12 @@ class _ExaminationPageState extends State<ExaminationPage> {
                     ),
                   ),
                   const SizedBox(height: 20),
+
                   // ComponentPortion visibility based on _isFullView
                   if (_isFullView)
                     Column(
                       children: [
                         const SizedBox(height: 20),
-                        // ComponentPortion(onChiefComplaintsPressed: _handleChiefComplaintsPressed),
-                        // ComponentPortion(),
                         Chiefcomplaint(),
                         Allergy(),
                         Diagnosis(),
@@ -303,6 +341,7 @@ class _ExaminationPageState extends State<ExaminationPage> {
                   const InvestigationDropdown(),
 
                   SizedBox(height:10 ,),
+
                   // Follow-up
                   Container(
                     width: 325,
@@ -372,6 +411,7 @@ class _ExaminationPageState extends State<ExaminationPage> {
                     ),
                   ),
                   SizedBox(height: 10,),
+
                   // Toggle View Button
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -381,7 +421,10 @@ class _ExaminationPageState extends State<ExaminationPage> {
                           backgroundColor: Colors.red,
                         ),
                         onPressed: _toggleView,
-                        child: Text(_isFullView ? 'Lite View' : 'Full View',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),
+                        child: Text(
+                          _isFullView ? 'Lite View' : 'Full View',
+                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                        ),
                       ),
                     ],
                   ),
@@ -394,3 +437,4 @@ class _ExaminationPageState extends State<ExaminationPage> {
     );
   }
 }
+

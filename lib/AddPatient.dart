@@ -20,7 +20,7 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
   final TextEditingController _stateController = TextEditingController();
   final TextEditingController _countryController = TextEditingController();
   final TextEditingController _dobController = TextEditingController();
-  static const String baseUrl = 'https://fb35-103-117-65-66.ngrok-free.app';
+  static const String baseUrl = 'https://4b2a-103-117-65-66.ngrok-free.app';
 
   DateTime? _dob;
   String? _selectedTitle;
@@ -166,24 +166,7 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
         }
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result)));
 
-        _formKey.currentState?.reset();
-        _mobileController.clear();
-        _firstNameController.clear();
-        _lastNameController.clear();
-        _ageController.clear();
-        _aadharController.clear();
-        _addressController.clear();
-        _cityController.clear();
-        _stateController.clear();
-        _countryController.clear();
-        _dobController.clear();
-        setState(() {
-          _dob = null;
-          _selectedTitle = null;
-          _selectedGender = null;
-          _showMoreDetails = false;
-          _isModification = false; // Reset for next use
-        });
+        print('Navigating to ExaminationPage with data: ${_firstNameController.text} ${_lastNameController.text}, ${_ageController.text}, ${_selectedGender}');
 
         Navigator.push(
           context,
@@ -195,6 +178,7 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
             ),
           ),
         );
+
       } catch (error) {
         print('Error: $error');
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('An error occurred while ${_isModification ? 'updating' : 'registering'} the patient.')));
@@ -202,21 +186,21 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
     }
   }
 
-
   void _selectDate() async {
     DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: _dob ?? DateTime.now(),
       firstDate: DateTime(1900),
-
       lastDate: DateTime.now(),
     );
 
     if (pickedDate != null) {
       setState(() {
         _dob = pickedDate;
+        // Formatting date as day-month-year
         _dobController.text = "${_dob!.day.toString().padLeft(2, '0')}-${_dob!.month.toString().padLeft(2, '0')}-${_dob!.year}";
 
+        // Optionally, update age if necessary
         _ageController.text = ((DateTime.now().difference(pickedDate).inDays) ~/ 365).toString();
       });
     }
@@ -452,6 +436,7 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
                     ),
                   ),
 
+
                   Center(
                     child: TextButton(
                       onPressed: () {
@@ -459,9 +444,9 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
                           context,
                           MaterialPageRoute(
                             builder: (context) => ExaminationPage(
-                              name: 'xyz',
-                              age: 0,
-                              gender: 'Male',
+                              name: '${_firstNameController.text} ${_lastNameController.text}',
+                              age: int.tryParse(_ageController.text) ?? 0,
+                              gender: _selectedGender ?? '',
                             ),
                           ),
                         );

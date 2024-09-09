@@ -12,7 +12,7 @@ class VitalData extends StatelessWidget {
 
   // Function to handle the POST request
   Future<void> postVitalData(Map<String, String> vitalData) async {
-    final url = Uri.parse('http://localhost:3000/vitals'); // Replace with your API URL
+    final url = Uri.parse('http://localhost:3000/vitals');
     try {
       final response = await http.post(
         url,
