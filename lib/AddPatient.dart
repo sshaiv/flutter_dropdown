@@ -27,7 +27,7 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
   String? _selectedGender;
   String? _selectedAgeUnit = 'Years';
   bool _showMoreDetails = false;
-  bool _isModification = false; // To distinguish between creation and modification
+  bool _isModification = false;
 
   @override
   void initState() {
@@ -77,7 +77,7 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
         final Map<String, dynamic> data = json.decode(response.body);
         _handleDataSet(data);
         setState(() {
-          _isModification = true; // Set to true if patient exists
+          _isModification = true;
         });
       } catch (error) {
         print('Error fetching data: $error');
@@ -96,7 +96,7 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
         _stateController.clear();
         _countryController.clear();
         _dob = null;
-        _isModification = false; // Set to false if no mobile number
+        _isModification = false;
       });
     }
   }
@@ -123,7 +123,6 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
       final String? formattedDob = _dob != null
           ? "${_dob!.year}-${_dob!.month.toString().padLeft(2, '0')}-${_dob!.day.toString().padLeft(2, '0')}"
           : null;
-
       final Map<String, String> formData = {
         'mobileno': _mobileController.text,
         'alternateMobileNo': '',
@@ -137,7 +136,7 @@ class _PatientRegistrationPageState extends State<PatientRegistrationPage> {
         'stateid': _stateController.text,
         'countryid': _countryController.text,
         'address': _addressController.text,
-        'dob': formattedDob ?? '', // Add date of birth to the form data
+        'dob': formattedDob ?? '',
       };
 
       try {

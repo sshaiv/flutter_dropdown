@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:medicine_doc/Examination/vital_data.dart';
-
 import 'ComponentPortion/Allergy.dart';
 import 'ComponentPortion/ChiefComplaint.dart';
 import 'ComponentPortion/ExaminationFindings.dart';
@@ -228,7 +227,7 @@ class _ExaminationPageState extends State<ExaminationPage> {
                   ),
                   const SizedBox(height: 16),
 
-                  // Vital Data (Replace with your actual implementation)
+                  // Vital Data
                   VitalData(controllers: List.generate(10, (index) => TextEditingController())),
                   const SizedBox(height: 10),
 

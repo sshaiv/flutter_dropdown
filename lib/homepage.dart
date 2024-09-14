@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart'; // Import Google Fonts
-import 'dart:ui'; // Import for ImageFilter
-import 'AddPatient.dart'; // Import the new page
+import 'package:google_fonts/google_fonts.dart';
+import 'dart:ui';
+import 'AddPatient.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -16,21 +16,20 @@ class _HomepageState extends State<Homepage> {
     return Scaffold(
       body: Stack(
         children: [
-          // Background Image with Blur Effect
-          Container(
+                   Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage(
-                    'assets/images/background.png'), // Your background image
+                    'assets/images/background.png'),
                 fit: BoxFit.cover,
               ),
             ),
             child: BackdropFilter(
               filter:
-              ImageFilter.blur(sigmaX: 5, sigmaY: 5), // Light blur effect
+              ImageFilter.blur(sigmaX: 5, sigmaY: 5),
               child: Container(
                 color: Colors.black
-                    .withOpacity(0.1), // Slight dark overlay for readability
+                    .withOpacity(0.1),
               ),
             ),
           ),
@@ -41,7 +40,7 @@ class _HomepageState extends State<Homepage> {
                 child: Container(
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(
-                        0.15), // Very light transparency for the card
+                        0.15),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   padding: const EdgeInsets.all(24.0),
@@ -52,13 +51,13 @@ class _HomepageState extends State<Homepage> {
                     children: <Widget>[
                       Image.asset(
                         'assets/images/medonextlogo.png',
-                        height: 150, // Adjust the height as needed
+                        height: 150,
                       ),
-                      const SizedBox(height: 16), // Add spacing here
+                      const SizedBox(height: 16),
                       Text(
                         'Welcome to MedoNext',
                         style: GoogleFonts.roboto(
-                          fontSize: 24, // Adjusted font size
+                          fontSize: 24,
                           fontWeight: FontWeight.bold,
                           color: Colors.red,
                         ),
@@ -69,19 +68,17 @@ class _HomepageState extends State<Homepage> {
                         child: Text(
                           'Next Generation Health Care Solutions.....Patient Care with Embedded Solution',
                           style: GoogleFonts.barlowCondensed(
-                            fontSize: 20, // Adjusted font size
+                            fontSize: 20,
                             fontWeight: FontWeight.bold,
                             color: Color.fromARGB(255, 2, 66, 130),
                           ),
                           textAlign: TextAlign.center,
                         ),
                       ),
-                      const SizedBox(height: 32), // Add spacing here
+                      const SizedBox(height: 32),
 
-                      // Clickable image with very light blur background
                       GestureDetector(
                         onTap: () {
-                          // Navigate to the Add Patient page
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -96,15 +93,15 @@ class _HomepageState extends State<Homepage> {
                           ),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(
-                                10), // Match the shape to the container
+                                10),
                             child: Stack(
                               alignment: Alignment.center,
                               children: [
-                                // Very light blur background
+
                                 BackdropFilter(
                                   filter: ImageFilter.blur(
                                       sigmaX: 3,
-                                      sigmaY: 3), // Reduced blur intensity
+                                      sigmaY: 3),
                                   child: Container(
                                     width: 200,
                                     height: 50,
@@ -117,8 +114,8 @@ class _HomepageState extends State<Homepage> {
                                 ),
                                 // Image
                                 Image.asset(
-                                  'assets/images/addpatientbtn.png', // Replace with your icon image
-                                  height: 50, // Adjust the size as needed
+                                  'assets/images/addpatientbtn.png',
+                                  height: 50,
                                   width: 75,
                                 ),
                               ],

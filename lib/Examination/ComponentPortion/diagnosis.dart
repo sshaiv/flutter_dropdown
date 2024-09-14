@@ -34,8 +34,8 @@ class _DiagnosisState extends State<Diagnosis> {
   List<String> filteredItems = [];
   bool isLoading = false;
   bool hasMoreItems = true;
-  int batchSize = 20; // Define your batch size here
-  List<String> items = []; // Store filtered items
+  int batchSize = 20;
+  List<String> items = [];
 
   @override
   void initState() {
